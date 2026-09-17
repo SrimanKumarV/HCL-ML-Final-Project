@@ -1,0 +1,6 @@
+Target,Random_Forest,SVM,Gradient_Boosting,Best_Model
+Cooler_Condition,1.0,1.0,1.0,Random_Forest
+Valve_Condition,0.9546,0.7982,0.9705,Gradient_Boosting
+Pump_Leakage,0.9955,0.9864,0.9887,Random_Forest
+Accumulator_Pressure,0.9751,0.8934,0.9637,Random_Forest
+Stable_Flag,0.9751,0.9615,0.9728,Random_Forest

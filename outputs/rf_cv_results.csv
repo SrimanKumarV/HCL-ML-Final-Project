@@ -1,0 +1,6 @@
+Target,CV_Mean_Accuracy,CV_Std
+Cooler_Condition,0.9972,0.0018
+Valve_Condition,0.9365,0.0194
+Pump_Leakage,0.9932,0.0046
+Accumulator_Pressure,0.9717,0.0095
+Stable_Flag,0.9581,0.0138
