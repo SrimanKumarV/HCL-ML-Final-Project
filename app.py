@@ -1,10 +1,29 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import joblib
+import sys
 import os
 import io
 import time
+import streamlit as st
+import pandas as pd
+import numpy as np
+
+# Cross-platform / cross-version NumPy pickle compatibility shims
+try:
+    import numpy.core as _npc
+    if not hasattr(np, '_core'):
+        sys.modules['numpy._core'] = _npc
+        sys.modules['numpy._core.multiarray'] = _npc.multiarray
+except Exception:
+    pass
+
+try:
+    import numpy._core as _np_core
+    if not hasattr(np, 'core'):
+        sys.modules['numpy.core'] = _np_core
+        sys.modules['numpy.core.multiarray'] = _np_core.multiarray
+except Exception:
+    pass
+
+import joblib
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -405,16 +424,69 @@ def get_metadata(df):
 @st.cache_resource
 def load_models():
     models = {'rf': {}, 'svm': {}, 'gb': {}}
+    need_training = False
+
     for t in TARGET_COLS:
         rf_p = f'outputs/models/rf_{t}.joblib'
-        if os.path.exists(rf_p):
-            models['rf'][t] = joblib.load(rf_p)
         svm_p = f'outputs/models/svm_{t}.joblib'
-        if os.path.exists(svm_p):
-            models['svm'][t] = joblib.load(svm_p)
         gb_p = f'outputs/models/gb_{t}.joblib'
+
+        # Safely load Random Forest
+        if os.path.exists(rf_p):
+            try:
+                models['rf'][t] = joblib.load(rf_p)
+            except Exception:
+                need_training = True
+        else:
+            need_training = True
+
+        # Safely load Support Vector Machine
+        if os.path.exists(svm_p):
+            try:
+                models['svm'][t] = joblib.load(svm_p)
+            except Exception:
+                need_training = True
+        else:
+            need_training = True
+
+        # Safely load Gradient Boosting
         if os.path.exists(gb_p):
-            models['gb'][t] = joblib.load(gb_p)
+            try:
+                models['gb'][t] = joblib.load(gb_p)
+            except Exception:
+                need_training = True
+        else:
+            need_training = True
+
+    # Cloud self-healing fallback: train models in memory if cloud Python has binary pickle mismatch
+    if need_training:
+        with st.spinner("Initializing models for cloud environment (one-time setup)..."):
+            from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+            from sklearn.svm import SVC
+            from sklearn.preprocessing import StandardScaler
+
+            df_train = load_data()
+            target_cols = TARGET_COLS + [tc + '_enc' for tc in TARGET_COLS] + ['Cycle_ID']
+            f_cols = [c for c in df_train.columns if c not in target_cols]
+            X = df_train[f_cols]
+
+            for t in TARGET_COLS:
+                y = df_train[t + '_enc']
+                if t not in models['rf']:
+                    rf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
+                    rf.fit(X, y)
+                    models['rf'][t] = rf
+                if t not in models['gb']:
+                    gb = GradientBoostingClassifier(n_estimators=60, learning_rate=0.1, max_depth=3, random_state=42)
+                    gb.fit(X, y)
+                    models['gb'][t] = gb
+                if t not in models['svm']:
+                    sc = StandardScaler()
+                    Xs = sc.fit_transform(X)
+                    svm = SVC(kernel='rbf', C=10, gamma='scale', random_state=42)
+                    svm.fit(Xs, y)
+                    models['svm'][t] = (svm, sc)
+
     return models
 
 @st.cache_data
