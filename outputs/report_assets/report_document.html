@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hydraulic Condition Monitoring AI & Digital Twin</title>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    background-color: #0A0E17;
+    color: #F1F5F9;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 8.6pt;
+    line-height: 1.46;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    box-sizing: border-box;
+    width: 210mm;
+    min-height: 297mm;
+    max-height: 297mm;
+    padding: 12mm 15mm 15mm 15mm;
+    background-color: #0A0E17;
+    position: relative;
+    page-break-before: always;
+    page-break-inside: avoid;
+    overflow: hidden;
+  }
+
+  .page-first {
+    page-break-before: avoid;
+  }
+
+  .running-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1E293B;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+    font-size: 7pt;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .running-header .title-badge {
+    color: #38BDF8;
+    font-weight: 700;
+  }
+
+  .running-footer {
+    position: absolute;
+    bottom: 8mm;
+    left: 15mm;
+    right: 15mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #1E293B;
+    padding-top: 4px;
+    font-size: 7.2pt;
+    color: #64748B;
+  }
+
+  .running-footer a {
+    color: #38BDF8;
+    text-decoration: none;
+  }
+
+  h1, h2, h3, h4, h5 {
+    color: #F8FAFC;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+
+  h1 { font-size: 17.5pt; line-height: 1.25; margin-bottom: 5px; color: #38BDF8; }
+  h2 { font-size: 12.5pt; line-height: 1.3; margin-top: 8px; margin-bottom: 5px; color: #38BDF8; border-bottom: 1px solid #1E293B; padding-bottom: 3px; }
+  h3 { font-size: 10pt; line-height: 1.35; margin-top: 7px; margin-bottom: 4px; color: #E2E8F0; }
+  h4 { font-size: 8.8pt; margin-top: 5px; margin-bottom: 3px; color: #38BDF8; }
+
+  p {
+    margin-bottom: 5px;
+    color: #CBD5E1;
+    text-align: justify;
+  }
+
+  strong {
+    color: #F8FAFC;
+    font-weight: 600;
+  }
+
+  a {
+    color: #38BDF8;
+    text-decoration: underline;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5pt;
+    background: #111827;
+    color: #38BDF8;
+    padding: 1px 4px;
+    border-radius: 4px;
+    border: 1px solid #1E293B;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+    margin: 7px 0 9px 0;
+  }
+
+  .kpi-card {
+    background: #111827;
+    border: 1px solid #1E293B;
+    border-radius: 7px;
+    padding: 8px 9px;
+    text-align: center;
+  }
+
+  .kpi-card.highlight {
+    border-color: #38BDF8;
+    background: linear-gradient(145deg, #111827 0%, #0F172A 100%);
+  }
+
+  .kpi-val {
+    font-size: 13.5pt;
+    font-weight: 800;
+    color: #38BDF8;
+    line-height: 1.1;
+  }
+
+  .kpi-val.green { color: #10B981; }
+  .kpi-val.amber { color: #F59E0B; }
+
+  .kpi-lbl {
+    font-size: 6.6pt;
+    font-weight: 600;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  .card {
+    background: #111827;
+    border: 1px solid #1E293B;
+    border-radius: 7px;
+    padding: 8px 10px;
+    margin-bottom: 7px;
+  }
+
+  .card-cyan { border-left: 3px solid #38BDF8; }
+  .card-teal { border-left: 3px solid #14B8A6; }
+  .card-green { border-left: 3px solid #10B981; }
+  .card-amber { border-left: 3px solid #F59E0B; }
+  .card-red { border-left: 3px solid #EF4444; }
+
+  .card-title {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #F8FAFC;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    margin-bottom: 7px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 7px;
+    margin-bottom: 7px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 5px 0 8px 0;
+    font-size: 7.5pt;
+  }
+
+  th {
+    background: #1E293B;
+    color: #38BDF8;
+    font-weight: 700;
+    text-align: left;
+    padding: 4px 6px;
+    border: 1px solid #334155;
+    font-size: 7.2pt;
+    letter-spacing: 0.3px;
+  }
+
+  td {
+    padding: 3.5px 6px;
+    border: 1px solid #1E293B;
+    color: #CBD5E1;
+    background: #0F172A;
+  }
+
+  tr:nth-child(even) td {
+    background: #111827;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 1.5px 5px;
+    border-radius: 3.5px;
+    font-size: 6.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .badge-cyan { background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.4); }
+  .badge-green { background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.4); }
+  .badge-amber { background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4); }
+  .badge-red { background: rgba(239, 68, 68, 0.15); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+  .figure-container {
+    margin: 5px 0 7px 0;
+    text-align: center;
+    background: #0F172A;
+    border: 1px solid #1E293B;
+    border-radius: 7px;
+    padding: 5px;
+    page-break-inside: avoid;
+  }
+
+  .figure-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .figure-caption {
+    font-size: 7pt;
+    color: #94A3B8;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .figure-caption strong {
+    color: #38BDF8;
+  }
+
+  ul, ol {
+    margin: 3px 0 5px 15px;
+    color: #CBD5E1;
+  }
+
+  li {
+    margin-bottom: 2px;
+  }
+
+  .section-divider {
+    height: 2px;
+    background: linear-gradient(90deg, #38BDF8 0%, #14B8A6 50%, transparent 100%);
+    margin: 6px 0 10px 0;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="page page-first" style="display: flex; flex-direction: column; justify-content: space-between; background: radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 55%), radial-gradient(circle at 15% 85%, rgba(20, 184, 166, 0.10) 0%, transparent 55%), #0A0E17; border: 1.5px solid #1E293B;">
+  <div>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1E293B; padding-bottom: 12px; margin-bottom: 20mm;">
+      <div>
+        <span class="badge badge-cyan" style="font-size: 8pt; padding: 4px 10px;">HCL ACADEMY FINAL PROJECT EVALUATION</span>
+        <span class="badge badge-green" style="font-size: 8pt; padding: 4px 10px; margin-left: 6px;">PROJECT 11</span>
+      </div>
+      <div style="font-size: 8.5pt; color: #94A3B8; font-weight: 600; letter-spacing: 0.5px;">INDUSTRIAL AI &amp; DIGITAL TWIN</div>
+    </div>
+
+    <div style="margin-bottom: 14mm;">
+      <div style="font-size: 10.5pt; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 10px;">COMPREHENSIVE TECHNICAL DISSERTATION</div>
+      <h1 style="font-size: 25pt; line-height: 1.18; color: #F8FAFC; margin-bottom: 12px; font-weight: 900; letter-spacing: -0.5px;">
+        HYDRAULIC CONDITION MONITORING AI<br>&amp; DIGITAL TWIN
+      </h1>
+      <div style="font-size: 12.5pt; color: #38BDF8; font-weight: 500; line-height: 1.35; margin-bottom: 16px;">
+        Real-Time Multi-Target Machine Learning Diagnostics &amp; Interactive Sensitivity Simulation for Industrial Hydraulic Power Units
+      </div>
+      <div style="height: 3px; width: 140px; background: linear-gradient(90deg, #38BDF8, #14B8A6); border-radius: 2px; margin-bottom: 18px;"></div>
+      <p style="font-size: 9.2pt; color: #94A3B8; max-width: 95%; line-height: 1.6;">
+        A publication-quality engineering investigation encompassing 17 synchronized physical sensor channels, 2,205 operating cycles from the ZeMA benchmark test rig, multi-scale statistical feature engineering, Pearson collinearity reduction (|r| &gt; 0.97), and 15 production-trained classification models (Random Forest, Gradient Boosting, Support Vector Machines). Achieves 95.5% to 100.0% diagnostic accuracy across 5 critical hydraulic failure modes, served through a live Streamlit Digital Twin application.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16mm;">
+      <div class="card card-cyan" style="background: #0F172A; padding: 12px 14px;">
+        <div style="font-size: 7.5pt; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Multi-Target AI Engine</div>
+        <div style="font-size: 12pt; color: #F8FAFC; font-weight: 700; margin-top: 3px;">5 Subsystems</div>
+        <div style="font-size: 7.5pt; color: #38BDF8; margin-top: 3px;">Cooler, Valve, Pump, Acc, Stability</div>
+      </div>
+      <div class="card card-teal" style="background: #0F172A; padding: 12px 14px;">
+        <div style="font-size: 7.5pt; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Diagnostic Accuracy</div>
+        <div style="font-size: 12pt; color: #10B981; font-weight: 700; margin-top: 3px;">95.5% — 100.0%</div>
+        <div style="font-size: 7.5pt; color: #94A3B8; margin-top: 3px;">Stratified 5-Fold Cross-Validated</div>
+      </div>
+      <div class="card card-amber" style="background: #0F172A; padding: 12px 14px;">
+        <div style="font-size: 7.5pt; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Interactive Cockpit</div>
+        <div style="font-size: 12pt; color: #F59E0B; font-weight: 700; margin-top: 3px;">Digital Twin Studio</div>
+        <div style="font-size: 7.5pt; color: #94A3B8; margin-top: 3px;">Live Streamlit Cloud Deployment</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div style="background: #0F172A; border: 1px solid #1E293B; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 8.5pt; font-weight: 700; color: #F8FAFC; text-transform: uppercase; letter-spacing: 0.5px;">Live Verification &amp; Codebase Assets</div>
+        <span class="badge badge-green">Production Deployed</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 8pt;">
+        <div>
+          <span style="color: #94A3B8;">GitHub Repository:</span><br>
+          <a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank" style="color: #38BDF8; font-weight: 600; text-decoration: none;">https://github.com/SrimanKumarV/HCL-ML-Final-Project</a>
+        </div>
+        <div>
+          <span style="color: #94A3B8;">Live Streamlit Application:</span><br>
+          <a href="https://hydraulic-ai-monitor.streamlit.app/" target="_blank" style="color: #38BDF8; font-weight: 600; text-decoration: none;">https://hydraulic-ai-monitor.streamlit.app/</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 7.5pt; color: #64748B; border-top: 1px solid #1E293B; padding-top: 10px;">
+      <div>Document ID: <strong>HCL-ML-PROJ11-DEEP-2026</strong></div>
+      <div>Source Integrity: <strong>100% Repository-Verified Artifacts</strong></div>
+      <div>Author / Candidate: <strong>Sriman Kumar V</strong></div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 2: Executive Summary</span></div>
+  <h2>2. Executive Summary</h2>
+  <div class="section-divider"></div>
+  <p>Heavy industrial manufacturing—including automotive stamping presses, injection molding machines, forging hammers, and hydraulic power units—depends completely on hydraulic power systems. In these environments, gradual mechanical degradation occurs continuously in submerged, enclosed components such as axial piston pumps, directional proportional valves, heat-exchanger coolers, and bladder accumulators. Because degradation is hidden from external inspection, traditional maintenance relies either on static single-sensor threshold alarms or fixed calendar-based scheduled maintenance. Both approaches result in severe inefficiencies: either catastrophic unexpected equipment failure causing thousands of dollars per hour in production downtime, or premature component replacement that discards operational equipment.</p>
+
+  <div class="kpi-grid">
+    <div class="kpi-card highlight"><div class="kpi-val">2,205</div><div class="kpi-lbl">Test Rig Cycles</div></div>
+    <div class="kpi-card"><div class="kpi-val">17</div><div class="kpi-lbl">Physical Sensors</div></div>
+    <div class="kpi-card"><div class="kpi-val">88</div><div class="kpi-lbl">Engineered Features</div></div>
+    <div class="kpi-card highlight"><div class="kpi-val green">100.0%</div><div class="kpi-lbl">Cooler Accuracy</div></div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-val green">99.55%</div><div class="kpi-lbl">Pump Leakage Acc</div></div>
+    <div class="kpi-card"><div class="kpi-val green">97.51%</div><div class="kpi-lbl">Accumulator Acc</div></div>
+    <div class="kpi-card"><div class="kpi-val green">97.05%</div><div class="kpi-lbl">Valve Condition Acc</div></div>
+    <div class="kpi-card highlight"><div class="kpi-val">&lt; 50 ms</div><div class="kpi-lbl">Inference Latency</div></div>
+  </div>
+
+  <p>This project formulates, validates, and deploys an end-to-end <strong>Predictive Maintenance Machine Learning System and Interactive Digital Twin Cockpit</strong> for hydraulic condition monitoring. Operating on 2,205 rigorous 60-second physical test-rig cycles from the benchmark ZeMA hydraulic test bench, the system captures 17 synchronized physical sensor streams (pressure, volume flow, oil temperature, motor vibration, mechanical and thermal efficiencies, and electric motor power) sampled from 1 Hz to 100 Hz.</p>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">🔍 The Core Machine Learning Solution</div>
+      <p style="font-size: 7.8pt; margin-bottom: 0;">From 171 multi-scale statistical features extracted across cycle time series (mean, variance, peak range, transient slope d/dt, skewness, and kurtosis), a Pearson collinearity filter (|r| &gt; 0.97) eliminates 83 redundant channels to yield 88 high-information descriptors. Five independent specialized classification heads are trained across three algorithm families (Random Forest, Gradient Boosting, Support Vector Machines) to classify degradation across 5 distinct subsystems simultaneously.</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">🌐 The Digital Twin Cockpit Innovation</div>
+      <p style="font-size: 7.8pt; margin-bottom: 0;">Trained models are packaged via Joblib and served through an industrial-grade Streamlit Digital Twin application deployed live to the cloud. The platform provides 6 interactive modules: Live Cycle Diagnostics with composite health scoring (0–100), What-If Sensitivity Studio with 40-step probability sweeps, 3D Sensor Cluster Explorer, Telemetry Stream Simulator, Batch File Diagnostics, and Benchmark Analytics.</p>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <div class="card-title">📊 Key Benchmark Findings &amp; Engineering Contributions</div>
+    <ul style="font-size: 7.5pt; margin-bottom: 0;">
+      <li><strong>Cooler Heat Exchanger:</strong> 100.0% test accuracy across all 3 algorithms (RF, GB, SVM), supported by 99.72% ± 0.18% 5-fold cross-validation, demonstrating that thermal signature dynamics are cleanly decoupled.</li>
+      <li><strong>Directional Spool Valve:</strong> Gradient Boosting achieved the peak score of 97.05% test accuracy (outperforming Random Forest at 95.46% and SVM at 79.82%), demonstrating boosting's superiority in capturing subtle non-linear switching lags.</li>
+      <li><strong>Axial Piston Pump Leakage:</strong> Random Forest achieved 99.55% test accuracy with 99.32% ± 0.46% CV stability, correctly identifying internal bypass slip stages via motor power (EPS1) and flow (FS1).</li>
+      <li><strong>Hydraulic Accumulator Pressure:</strong> Random Forest achieved 97.51% test accuracy (97.17% ± 0.95% CV), reliably diagnosing nitrogen pre-charge loss from 130 bar down to 90 bar.</li>
+      <li><strong>Real-World Impact:</strong> Enables true condition-based maintenance, eliminating catastrophic downtime and preventing secondary hydraulic shock damage.</li>
+    </ul>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 2 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Document Structure &amp; Table of Contents</span></div>
+  <h2>Table of Contents</h2>
+  <div class="section-divider"></div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 7.8pt;">
+    <div>
+      <div style="color: #38BDF8; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Part I: Project Foundations &amp; System Architecture</div>
+      <table style="margin: 0 0 8px 0;">
+        <tr><td style="width: 28px; font-weight: 700; color: #38BDF8;">1</td><td>Cover Page &amp; Project Metadata</td><td style="text-align: right; color: #94A3B8;">1</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">2</td><td>Executive Summary &amp; KPI Dashboard</td><td style="text-align: right; color: #94A3B8;">2</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">3</td><td>Problem Statement &amp; Industry Context</td><td style="text-align: right; color: #94A3B8;">4</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">4</td><td>Project Objectives &amp; Academic Scope</td><td style="text-align: right; color: #94A3B8;">4</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">5</td><td>System Overview &amp; Architecture Diagram</td><td style="text-align: right; color: #94A3B8;">5</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">6</td><td>Dataset Description &amp; Sensor Specifications</td><td style="text-align: right; color: #94A3B8;">6</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">7</td><td>Sensor &amp; Feature Engineering Pipeline</td><td style="text-align: right; color: #94A3B8;">7</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">8</td><td>Target Variables &amp; Hydraulic Failure Modes</td><td style="text-align: right; color: #94A3B8;">8</td></tr>
+      </table>
+
+      <div style="color: #38BDF8; font-weight: 700; margin-top: 10px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Part II: Machine Learning Pipeline &amp; Models</div>
+      <table style="margin: 0 0 8px 0;">
+        <tr><td style="width: 28px; font-weight: 700; color: #38BDF8;">9</td><td>Data Preprocessing &amp; Collinearity Filtering</td><td style="text-align: right; color: #94A3B8;">9</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">10</td><td>Machine Learning Model Algorithms (RF, SVM, GB)</td><td style="text-align: right; color: #94A3B8;">10</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">11</td><td>Model Training Pipeline &amp; Persistence</td><td style="text-align: right; color: #94A3B8;">12</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">12</td><td>Model Performance &amp; Benchmark Results</td><td style="text-align: right; color: #94A3B8;">13</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">13</td><td>Cross-Validation Analysis &amp; Fold Stability</td><td style="text-align: right; color: #94A3B8;">14</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">14</td><td>Confusion Matrix Analysis (Cooler &amp; Valve)</td><td style="text-align: right; color: #94A3B8;">15</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">15</td><td>Feature Importance &amp; Physics Interpretation</td><td style="text-align: right; color: #94A3B8;">17</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">16</td><td>Exploratory Data Analysis &amp; Correlation Heatmap</td><td style="text-align: right; color: #94A3B8;">18</td></tr>
+      </table>
+    </div>
+
+    <div>
+      <div style="color: #38BDF8; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Part III: Streamlit Application &amp; Digital Twin</div>
+      <table style="margin: 0 0 8px 0;">
+        <tr><td style="width: 28px; font-weight: 700; color: #38BDF8;">17</td><td>Application &amp; Streamlit Dashboard Modules</td><td style="text-align: right; color: #94A3B8;">19</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">18</td><td>What-If Sensitivity Studio &amp; Scenario Presets</td><td style="text-align: right; color: #94A3B8;">21</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">19</td><td>Digital Twin Concept &amp; 3D Sensor Explorer</td><td style="text-align: right; color: #94A3B8;">23</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">20</td><td>Condition Scoring &amp; Maintenance Action Matrix</td><td style="text-align: right; color: #94A3B8;">25</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">21</td><td>Software Architecture &amp; Ecosystem Design</td><td style="text-align: right; color: #94A3B8;">26</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">22</td><td>Technology Stack &amp; Framework Cards</td><td style="text-align: right; color: #94A3B8;">26</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">23</td><td>Model Deployment &amp; Caching Architecture</td><td style="text-align: right; color: #94A3B8;">28</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">24</td><td>Application Workflow &amp; User Journey</td><td style="text-align: right; color: #94A3B8;">27</td></tr>
+      </table>
+
+      <div style="color: #38BDF8; font-weight: 700; margin-top: 10px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Part IV: Discussion, Production &amp; Reproduction</div>
+      <table style="margin: 0 0 8px 0;">
+        <tr><td style="width: 28px; font-weight: 700; color: #38BDF8;">25</td><td>Results Discussion &amp; Algorithm Comparison</td><td style="text-align: right; color: #94A3B8;">29</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">26</td><td>Project Limitations &amp; Boundary Conditions</td><td style="text-align: right; color: #94A3B8;">30</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">27</td><td>Future Enhancements &amp; Roadmap</td><td style="text-align: right; color: #94A3B8;">31</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">28</td><td>Security, Reliability &amp; Fail-Safe Design</td><td style="text-align: right; color: #94A3B8;">32</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">29</td><td>Reproducibility &amp; Local Execution Guide</td><td style="text-align: right; color: #94A3B8;">33</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">30</td><td>Project Directory Structure &amp; Code Inventory</td><td style="text-align: right; color: #94A3B8;">34</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">31</td><td>Conclusion &amp; Technical Summary</td><td style="text-align: right; color: #94A3B8;">35</td></tr>
+        <tr><td style="font-weight: 700; color: #38BDF8;">32</td><td>References &amp; Clickable Master Links</td><td style="text-align: right; color: #94A3B8;">36</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card card-cyan" style="margin-top: 8px;">
+    <div class="card-title">📖 Report Reading &amp; Source Verification Protocol</div>
+    <p style="font-size: 7.5pt; margin-bottom: 0;">All quantitative metrics, hyperparameter values, dataset dimensions, and model performance scores documented herein are drawn strictly from active source code, trained model artifacts, CSV logs, and plot outputs in repository <code>HCL-ML-Final-Project</code>. No synthetic or extrapolated values have been introduced. Every chart incorporates original vector and high-resolution visual evidence.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 3 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 3: Problem Statement &amp; Section 4: Objectives</span></div>
+  <h2>3. Problem Statement &amp; Industrial Context</h2>
+  <div class="section-divider"></div>
+  <p>Hydraulic machinery operates under extreme cyclic pressures (up to 200 bar), rapid flow pulses, and intense thermal dissipation. In manufacturing plants, critical equipment—such as 2,000-ton forging presses, plastic injection units, and aircraft hydraulic power rigs—relies on four interconnected mechanical components:</p>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">🔧 Subsystem Failure Risks</div>
+      <ul style="font-size: 7.5pt; margin-bottom: 0;">
+        <li><strong>Cooler Heat Exchangers:</strong> Silt and mineral scaling reduce cooling capacity. Once oil exceeds 60°C, viscosity drops precipitously, destroying lubricating film thickness.</li>
+        <li><strong>Directional Spool Valves:</strong> Micro-particulate contamination causes spool galling and mechanical sticking, inducing stroke cycle lag and pressure spikes.</li>
+        <li><strong>Axial Piston Pumps:</strong> Internal slipper plate wear causes high-pressure fluid bypass to case drain, dropping volumetric efficiency from 95% to below 70%.</li>
+        <li><strong>Hydraulic Accumulators:</strong> Nitrogen gas permeates elastomer bladders, eliminating peak damping reserve and exposing pipes to shock hammer.</li>
+      </ul>
+    </div>
+    <div class="card card-red">
+      <div class="card-title">⚠️ The Industrial Failure Dilemma</div>
+      <p style="font-size: 7.5pt; margin-bottom: 4px;">Traditional industrial monitoring relies on <strong>static scalar threshold alarms</strong> (e.g., triggering an alarm only when oil temperature exceeds 65°C or pressure drops below 100 bar).</p>
+      <p style="font-size: 7.5pt; margin-bottom: 0;"><strong>The Fatal Flaw:</strong> By the time a single scalar alarm trips, catastrophic irreversible damage has already occurred (pump seizure, cylinder scoring, oil oxidation). Conversely, normal operating transient spikes trigger false alarms, causing operators to ignore alerts.</p>
+    </div>
+  </div>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/traditional_vs_ai.png" alt="Traditional vs AI Monitoring" style="max-height: 130px;">
+    <div class="figure-caption"><strong>Figure 1:</strong> Paradigm Comparison — Traditional Threshold-Based Alarm Systems vs. Multi-Sensor AI Condition Monitoring.</div>
+  </div>
+
+  <h2>4. Project Objectives</h2>
+  <div class="section-divider"></div>
+  <p>To overcome these limitations, this project was developed under the formal specifications of <strong>Project 11 (Predictive Maintenance for Hydraulic Press and Hydraulic Test-Rig Systems)</strong>, executing the following core engineering objectives:</p>
+
+  <div class="grid-3">
+    <div class="card card-teal">
+      <div class="card-title">🎯 Objective 1: Multi-Target ML</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">Formulate a multi-target diagnostic engine capable of simultaneously classifying degradation across 5 distinct components (Cooler, Valve, Pump, Accumulator, Stability) using a unified sensor feature vector.</p>
+    </div>
+    <div class="card card-cyan">
+      <div class="card-title">📊 Objective 2: Feature Engineering</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">Engineer per-cycle statistical features (mean, range, transient slope, std dev) from 17 high-frequency sensor streams, applying a strict collinearity reduction filter (|r| &gt; 0.97) to eliminate redundancy.</p>
+    </div>
+    <div class="card card-green">
+      <div class="card-title">🌐 Objective 3: Digital Twin Cockpit</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">Construct a real-time Streamlit digital twin with 6 interactive modules: Live Diagnostics, What-If Sensitivity sweeps, 3D Cluster visualization, Telemetry streaming, and Batch file evaluation.</p>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 4 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 5: End-to-End System Architecture</span></div>
+  <h2>5. End-to-End System Architecture</h2>
+  <div class="section-divider"></div>
+  <p>The complete system integrates physical hydraulic test-rig telemetry, automated data processing, multi-target machine learning inference, condition interpretation logic, and an interactive digital twin interface. The figure below illustrates the 6 primary pipeline stages and the bi-directional data flow connecting the test rig to the end user.</p>
+
+  <div class="figure-container" style="margin-bottom: 10px;">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/system_architecture.png" alt="System Architecture" style="max-height: 235px;">
+    <div class="figure-caption"><strong>Figure 2:</strong> End-to-End System Architecture Diagram — From Physical Test Rig Telemetry to Multi-Target AI and Streamlit Digital Twin Cockpit.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">🔄 Pipeline Stage Interactions</div>
+      <ul style="font-size: 7.5pt; margin-bottom: 0;">
+        <li><strong>Telemetry Acquisition:</strong> 17 physical sensors record 60-second repetitive duty cycles at 1 Hz, 10 Hz, and 100 Hz.</li>
+        <li><strong>Cycle Segmentation &amp; Profiling:</strong> Each cycle is segmented and converted into 171 multi-scale statistical features.</li>
+        <li><strong>Collinearity Filtering:</strong> Features with pairwise absolute Pearson correlation |r| &gt; 0.97 are pruned, leaving 88 optimal features.</li>
+        <li><strong>Multi-Target Dispatch:</strong> The 88-feature vector is dispatched simultaneously to 5 specialized model heads.</li>
+        <li><strong>Health Scoring:</strong> Individual target probabilities are synthesized into a 0–100 composite health score with action recommendations.</li>
+      </ul>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">🔗 Dataset → Models → Dashboard → User Linkage</div>
+      <p style="font-size: 7.5pt; margin-bottom: 4px;"><strong>Offline Pipeline:</strong> <code>run_pipeline.py</code> ingests the raw dataset, computes the correlation matrix, exports <code>hydraulic_preprocessed_dataset.csv</code>, trains 15 models (RF, SVM, GB), and saves serialized artifacts to <code>outputs/models/*.joblib</code>.</p>
+      <p style="font-size: 7.5pt; margin-bottom: 0;"><strong>Online Inference:</strong> <code>app.py</code> uses <code>@st.cache_resource</code> to load all 15 models instantly into memory. In the Live Cockpit, adjusting physical sliders or selecting presets triggers <code>predict_instance()</code>, generating multi-target outputs in under 50 ms.</p>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 5 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 6: Dataset Description &amp; Sensor Specifications</span></div>
+  <h2>6. Dataset Description &amp; Physical Sensors</h2>
+  <div class="section-divider"></div>
+  <p>The project utilizes the internationally recognized <strong>Condition Monitoring of Hydraulic Systems Dataset</strong>, established by the Center for Mechatronics and Automation Technology (ZeMA) and hosted on the UC Irvine Machine Learning Repository. The test bench simulates realistic industrial hydraulic operating conditions over 2,205 consecutive working cycles.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Sensor ID</th>
+        <th>Physical Quantity</th>
+        <th>Measurement Range / Units</th>
+        <th>Sampling Rate</th>
+        <th>Physical Function in Rig</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>PS1</code></td><td>Primary System Pressure</td><td>0 – 200 bar</td><td>100 Hz (6,000 samples)</td><td>Monitors relief valve opening and main cylinder load</td></tr>
+      <tr><td><code>PS2</code></td><td>Secondary Circuit Pressure</td><td>0 – 200 bar</td><td>100 Hz (6,000 samples)</td><td>Tracks directional spool valve actuation dynamics</td></tr>
+      <tr><td><code>PS3</code></td><td>Accumulator Line Pressure</td><td>0 – 200 bar</td><td>100 Hz (6,000 samples)</td><td>Measures pulsation dampening &amp; pre-charge state</td></tr>
+      <tr><td><code>PS4</code></td><td>Return Line Pressure</td><td>0 – 200 bar</td><td>100 Hz (6,000 samples)</td><td>Detects return line throttling &amp; backpressure</td></tr>
+      <tr><td><code>PS5</code></td><td>Filter Output Pressure</td><td>0 – 200 bar</td><td>100 Hz (6,000 samples)</td><td>Measures differential pressure across filter core</td></tr>
+      <tr><td><code>PS6</code></td><td>Cooler Inlet Pressure</td><td>0 – 200 bar</td><td>100 Hz (6,000 samples)</td><td>Reflects cooling circuit resistance &amp; radiator clogging</td></tr>
+      <tr><td><code>EPS1</code></td><td>Electric Motor Power</td><td>0 – 3,500 W</td><td>100 Hz (6,000 samples)</td><td>Reflects mechanical input energy &amp; pump slip power draw</td></tr>
+      <tr><td><code>FS1</code></td><td>Primary Volume Flow Rate</td><td>0 – 50 L/min</td><td>10 Hz (600 samples)</td><td>Direct measure of pump output &amp; spool valve throughput</td></tr>
+      <tr><td><code>FS2</code></td><td>Secondary Cooling Flow</td><td>0 – 50 L/min</td><td>10 Hz (600 samples)</td><td>Monitors coolant circulating circuit flow rate</td></tr>
+      <tr><td><code>TS1</code></td><td>Hydraulic Reservoir Temp</td><td>0 – 100 °C</td><td>1 Hz (60 samples)</td><td>Baseline bulk oil temperature in oil sump tank</td></tr>
+      <tr><td><code>TS2</code></td><td>Pump Outlet Temperature</td><td>0 – 100 °C</td><td>1 Hz (60 samples)</td><td>Thermal rise from internal friction and piston leakage</td></tr>
+      <tr><td><code>TS3</code></td><td>Cooler Inlet Temperature</td><td>0 – 100 °C</td><td>1 Hz (60 samples)</td><td>Hot oil feed arriving at heat exchanger</td></tr>
+      <tr><td><code>TS4</code></td><td>Cooler Outlet Temp</td><td>0 – 100 °C</td><td>1 Hz (60 samples)</td><td>Cooled oil return entering main circuit</td></tr>
+      <tr><td><code>VS1</code></td><td>Mechanical Vibration</td><td>0 – 10 mm/s</td><td>1 Hz (60 samples)</td><td>Tracks pump bearing wear, cavitation, and motor imbalance</td></tr>
+      <tr><td><code>CE</code></td><td>Cooling Efficiency</td><td>0 – 100 %</td><td>1 Hz (60 samples)</td><td>Normalized heat transfer rate of cooler circuit</td></tr>
+      <tr><td><code>CP</code></td><td>Cooling Power</td><td>0 – 10 kW</td><td>1 Hz (60 samples)</td><td>Thermal dissipation capacity in kilowatts</td></tr>
+      <tr><td><code>SE</code></td><td>Efficiency Factor</td><td>0 – 100 %</td><td>1 Hz (60 samples)</td><td>Composite hydraulic power transmission factor</td></tr>
+    </tbody>
+  </table>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/target_distributions.png" alt="Target Distributions" style="max-height: 120px;">
+    <div class="figure-caption"><strong>Figure 3:</strong> Ground-Truth Class Distributions across all 5 Target Subsystems (N = 2,205 Physical Cycles).</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">📁 Repository Datasets Relationship</div>
+      <ul style="font-size: 7.2pt; margin-bottom: 0;">
+        <li><code>hydraulic_combined_dataset.csv</code>: 2,205 rows × 176 cols (171 features + 5 targets). Full dataset before collinearity filtering.</li>
+        <li><code>hydraulic_preprocessed_dataset.csv</code>: 2,205 rows × 93 cols (88 features + 5 targets). Cleaned and reduced dataset used in production training.</li>
+        <li><code>sample_test_instances.csv</code>: 10 representative cycles with complete metadata used for unit testing and instant batch demonstration.</li>
+      </ul>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">⚖️ Class Distribution Characteristics</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;"><strong>Cooler Condition</strong> is perfectly balanced across 3 levels (~732–741 cycles each). <strong>Valve Condition</strong> and <strong>Accumulator Pressure</strong> have balanced fault states with larger nominal baseline representations. <strong>Stable Flag</strong> exhibits a 65.7% unstable (1,449 cycles) to 34.3% stable (756 cycles) distribution, reflecting realistic manufacturing operating variance.</p>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 6 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 7: Sensor &amp; Feature Engineering Pipeline</span></div>
+  <h2>7. Sensor &amp; Feature Engineering Pipeline</h2>
+  <div class="section-divider"></div>
+  <p>Raw time-series sensor data cannot be fed directly into classical tabular machine learning models without losing temporal structure and creating immense computational overhead (over 40,000 raw samples per cycle). To solve this, a rigorous multi-scale feature engineering pipeline was designed to transform raw time series into descriptive per-cycle statistical vectors.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/feature_engineering_pipeline.png" alt="Feature Engineering Pipeline" style="max-height: 175px;">
+    <div class="figure-caption"><strong>Figure 4:</strong> Feature Engineering Pipeline — From Raw Sensor Signals to 88 High-Information Descriptors.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">⚙️ Statistical Transformation Descriptors</div>
+      <ul style="font-size: 7.5pt; margin-bottom: 0;">
+        <li><strong>Central Tendency (Mean, Median):</strong> Captures baseline operating levels (e.g. <code>PS1_mean</code>, <code>PS2_median</code>). Reflects steady-state pressure and temperature envelopes.</li>
+        <li><strong>Dispersion (Standard Deviation, Variance):</strong> Quantifies cyclic instability and pulsation amplitude (e.g. <code>FS1_std</code>, <code>TS1_std</code>).</li>
+        <li><strong>Peak Dynamics (Min, Max, Peak-to-Peak Range):</strong> Measures transient extremes (e.g. <code>FS1_max</code>, <code>TS1_range</code>). Captures relief valve pop-off limits and thermal differential across the cycle.</li>
+        <li><strong>Transient Rate (Slope d/dt):</strong> Measures rate of pressure build-up and temperature rise during active stroke (e.g. <code>PS1_slope</code>, <code>CE_slope</code>). Highly sensitive to valve switching lag.</li>
+        <li><strong>Higher-Order Moments (Skewness, Kurtosis):</strong> Identifies non-Gaussian cavitation spikes, hydraulic hammer shocks, and valve flutter (e.g. <code>PS1_kurtosis</code>).</li>
+      </ul>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">🔬 Collinearity Reduction Formulation</div>
+      <p style="font-size: 7.5pt; margin-bottom: 4px;">High-frequency sensors measuring adjacent points on the same hydraulic manifold exhibit massive mutual redundancy (e.g., <code>PS1_mean</code> and <code>PS1_median</code> correlate at r &gt; 0.99).</p>
+      <p style="font-size: 7.5pt; margin-bottom: 4px;">To eliminate variance inflation without losing unique physical information, the pipeline computes the absolute Pearson correlation matrix:</p>
+      <div style="background: #0F172A; padding: 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.2pt; color: #38BDF8; margin-bottom: 5px; text-align: center;">
+        |r(f_i, f_j)| = |cov(f_i, f_j)| / (σ_i · σ_j) &gt; 0.97
+      </div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">Scanning the upper triangular matrix, any feature exhibiting |r| &gt; 0.97 with an existing feature is purged. This eliminates 83 collinear features, reducing the dimensionality from 171 to 88 cleanly decoupled predictors.</p>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 7 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 8: Target Variables &amp; Failure Modes</span></div>
+  <h2>8. Target Variables &amp; Hydraulic Failure Modes</h2>
+  <div class="section-divider"></div>
+  <p>The repository models 5 critical failure modes representing independent degradation phenomena occurring within the hydraulic circuit. Each subsystem exhibits specific physical mechanics, sensor signatures, and maintenance urgency levels.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/hydraulic_subsystems.png" alt="Subsystem Map" style="max-height: 175px;">
+    <div class="figure-caption"><strong>Figure 5:</strong> Subsystem Component Map — Physical Locations, Failure Modes, Sensor Signatures, and Target Labels.</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Target Variable</th>
+        <th>Physical Subsystem</th>
+        <th>Classes &amp; State Descriptions</th>
+        <th>Primary Driving Sensors</th>
+        <th>Maintenance Implications</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>Cooler_Condition</code></td>
+        <td>Cooler Heat Exchanger</td>
+        <td><span class="badge badge-red">3%</span> Total failure<br><span class="badge badge-amber">20%</span> Reduced eff<br><span class="badge badge-green">100%</span> Nominal</td>
+        <td><code>TS1_range</code>, <code>CE_std</code>, <code>TS1_std</code>, <code>CE_slope</code>, <code>TS2_mean</code></td>
+        <td>Risk of fluid breakdown, seal hardening, thermal degradation. Requires radiator flush.</td>
+      </tr>
+      <tr>
+        <td><code>Valve_Condition</code></td>
+        <td>Directional Spool Valve</td>
+        <td><span class="badge badge-red">73%</span> Critical<br><span class="badge badge-amber">80%</span> Severe lag<br><span class="badge badge-cyan">90%</span> Small lag<br><span class="badge badge-green">100%</span> Optimal</td>
+        <td><code>PS1_slope</code>, <code>PS2_median</code>, <code>PS1_kurtosis</code>, <code>PS3_mean</code></td>
+        <td>Particulate silting causes spool galling and sticking. Delayed cycle strokes. Replace cartridge.</td>
+      </tr>
+      <tr>
+        <td><code>Pump_Leakage</code></td>
+        <td>Internal Piston Pump</td>
+        <td><span class="badge badge-green">0</span> None (&gt;95%)<br><span class="badge badge-amber">1</span> Weak leakage<br><span class="badge badge-red">2</span> Severe bypass</td>
+        <td><code>EPS1_mean</code>, <code>FS1_std</code>, <code>FS1_max</code>, <code>EPS1_range</code></td>
+        <td>Slipper wear allows bypass to case drain. Motor draws excessive electrical power.</td>
+      </tr>
+      <tr>
+        <td><code>Accumulator_Pressure</code></td>
+        <td>Bladder Accumulator</td>
+        <td><span class="badge badge-red">90 bar</span> Danger<br><span class="badge badge-amber">100 bar</span> Low<br><span class="badge badge-cyan">115 bar</span> Reduced<br><span class="badge badge-green">130 bar</span> Optimal</td>
+        <td><code>PS1_mean</code>, <code>PS2_median</code>, <code>PS3_mean</code>, <code>PS4_mean</code></td>
+        <td>Nitrogen gas diffusion diminishes reserve volume. Severe hydraulic shock hammer risk.</td>
+      </tr>
+      <tr>
+        <td><code>Stable_Flag</code></td>
+        <td>Dynamic Stability</td>
+        <td><span class="badge badge-red">0</span> Instability / Hunting<br><span class="badge badge-green">1</span> Stable repeatability</td>
+        <td><code>PS1_std</code>, <code>VS1_mean</code>, <code>PS4_range</code>, <code>TS1_std</code></td>
+        <td>Indicates entrained air, valve hunting, or resonance oscillations. Retune PID controller.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 8 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 9: Data Preprocessing Pipeline</span></div>
+  <h2>9. Data Preprocessing Pipeline</h2>
+  <div class="section-divider"></div>
+  <p>The preprocessing architecture enforces strict methodological standards to prevent data leakage and ensure algorithm-specific optimization. The complete pipeline is illustrated in Figure 6.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/preprocessing_pipeline.png" alt="Preprocessing Pipeline" style="max-height: 175px;">
+    <div class="figure-caption"><strong>Figure 6:</strong> Preprocessing Pipeline — Data Ingestion, Collinearity Filtering, Stratified Splitting, and Dual Scaling Branches.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">🧹 Ingestion &amp; Quality Verification</div>
+      <ul style="font-size: 7.5pt; margin-bottom: 0;">
+        <li><strong>Completeness:</strong> Verified 0 null, NaN, or infinite values across all 2,205 rows and 176 raw columns.</li>
+        <li><strong>Type Enforcement:</strong> All 171 sensor features cast to 64-bit IEEE floating-point; targets cast to discrete integer categorical classes.</li>
+        <li><strong>Collinearity Drop:</strong> Feature matrix reduced from 171 to 88 features based on the |r| &gt; 0.97 upper triangle filter.</li>
+      </ul>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">✂️ Stratified Train / Test Partitioning</div>
+      <ul style="font-size: 7.5pt; margin-bottom: 0;">
+        <li><strong>Split Ratio:</strong> 80% Training (1,764 cycles) and 20% Holdout Testing (441 cycles).</li>
+        <li><strong>Random State:</strong> Fixed seed <code>random_state=42</code> for strict reproducibility.</li>
+        <li><strong>Stratification:</strong> Stratified sampling applied per target variable to guarantee identical class frequency proportions between training and test sets.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-amber">
+    <div class="card-title">⚖️ Dual-Branch Scaling Strategy &amp; Data Leakage Prevention</div>
+    <p style="font-size: 7.8pt; margin-bottom: 4px;">Different machine learning families possess distinct geometric inductive biases regarding feature scale:</p>
+    <div class="grid-2" style="margin-top: 4px;">
+      <div style="background: #0F172A; padding: 7px; border-radius: 5px; border: 1px solid #1E293B;">
+        <strong style="color: #38BDF8;">Branch A: Scale-Invariant Trees (RF &amp; GB)</strong><br>
+        <span style="font-size: 7.2pt; color: #CBD5E1;">Decision tree partitions are invariant to monotonic scaling transformations because splits are computed on relative feature orderings. Feeding raw features preserves original engineering physical units (bar, L/min, °C, W), facilitating direct interpretability and feature importance extraction without scaling distortion.</span>
+      </div>
+      <div style="background: #0F172A; padding: 7px; border-radius: 5px; border: 1px solid #1E293B;">
+        <strong style="color: #F59E0B;">Branch B: Distance-Sensitive Kernels (SVM)</strong><br>
+        <span style="font-size: 7.2pt; color: #CBD5E1;">Support Vector Machines compute Euclidean distances in kernel Hilbert space. Features with large numerical ranges (e.g. <code>EPS1_mean</code> ~3,000 W) would completely dominate small-scale features (e.g. <code>VS1_mean</code> ~0.5 mm/s). <code>StandardScaler</code> is applied: fitted <em>strictly</em> on <code>Xtr</code>, and then used to transform <code>Xte</code>, preventing test distribution leakage.</span>
+      </div>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 9 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 10: Machine Learning Models (RF &amp; SVM)</span></div>
+  <h2>10. Machine Learning Models (Part A: Random Forest &amp; SVM)</h2>
+  <div class="section-divider"></div>
+  <p>Three distinct classical machine learning algorithm families were benchmarked across all 5 prediction targets. This section details the mathematical foundation, hyperparameter configuration, and inductive suitability of Random Forest and Support Vector Machines.</p>
+
+  <div class="card card-cyan">
+    <div class="card-title">🌲 10.1 Random Forest Classifier (Breiman Ensemble)</div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size: 7.5pt;"><strong>Mathematical Foundation:</strong> Random Forest constructs an ensemble of B = 300 de-correlated decision trees:</p>
+        <div style="background: #0F172A; padding: 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.2pt; color: #38BDF8; margin-bottom: 5px; text-align: center;">
+          y_pred = argmax_c (1/B) ∑ I(T_b(x) == c)
+        </div>
+        <p style="font-size: 7.5pt; margin-bottom: 0;">Each tree is trained on an independent bootstrap sample of the training dataset (bagging). At every node split, a random subset of features m = √p ≈ √88 ≈ 9 features is evaluated using Gini impurity reduction.</p>
+      </div>
+      <div>
+        <table style="margin: 0; font-size: 7.2pt;">
+          <tr><th>Parameter</th><th>Repository Value</th><th>Engineering Justification</th></tr>
+          <tr><td><code>n_estimators</code></td><td>300</td><td>Sufficient trees to stabilize variance and eliminate out-of-bag error fluctuations</td></tr>
+          <tr><td><code>random_state</code></td><td>42</td><td>Ensures deterministic reproducibility of bootstrap splits</td></tr>
+          <tr><td><code>n_jobs</code></td><td>-1</td><td>Utilizes all available CPU cores for parallelized tree generation</td></tr>
+          <tr><td><code>criterion</code></td><td>'gini'</td><td>Standard Gini impurity for optimal multi-class partitioning</td></tr>
+        </table>
+      </div>
+    </div>
+    <p style="font-size: 7.5pt; margin-top: 5px; margin-bottom: 0;"><strong>Why It Excels:</strong> Extreme robustness to non-linear sensor correlations, zero need for feature scaling, natural resistance to overfitting via bagging, and built-in Gini feature importance calculation.</p>
+  </div>
+
+  <div class="card card-teal" style="margin-top: 8px;">
+    <div class="card-title">🎯 10.2 Support Vector Machine (Kernel Maximum Margin)</div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size: 7.5pt;"><strong>Mathematical Foundation:</strong> Support Vector Classification finds the optimal separating hyperplane that maximizes the geometric margin 2/||w|| in a transformed high-dimensional Hilbert feature space:</p>
+        <div style="background: #0F172A; padding: 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.2pt; color: #38BDF8; margin-bottom: 5px; text-align: center;">
+          K(x_i, x_j) = exp(-γ · ||x_i - x_j||²)
+        </div>
+        <p style="font-size: 7.5pt; margin-bottom: 0;">The dual formulation optimizes soft-margin slack penalties via regularization parameter C, balancing margin maximization against training error tolerance.</p>
+      </div>
+      <div>
+        <table style="margin: 0; font-size: 7.2pt;">
+          <tr><th>Parameter</th><th>Repository Value</th><th>Engineering Justification</th></tr>
+          <tr><td><code>kernel</code></td><td>'rbf'</td><td>Radial Basis Function captures complex non-linear boundary manifolds</td></tr>
+          <tr><td><code>C</code></td><td>10.0</td><td>Strict penalty on margin misclassifications, prioritizing high training separation</td></tr>
+          <tr><td><code>gamma</code></td><td>'scale'</td><td>γ = 1 / (n_features · Var(X)), dynamically adapting kernel width to scaled feature spread</td></tr>
+          <tr><td><code>random_state</code></td><td>42</td><td>Deterministic solver initialization</td></tr>
+        </table>
+      </div>
+    </div>
+    <p style="font-size: 7.5pt; margin-top: 5px; margin-bottom: 0;"><strong>Strengths &amp; Limitations:</strong> Exceptional on linearly separable or high-margin boundaries (achieving 100% on Cooler Condition and 98.64% on Pump Leakage). However, struggles on subtle, overlapping degradation steps (dropping to 79.82% on Valve Condition).</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 10 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 10: Machine Learning Models (Gradient Boosting)</span></div>
+  <h2>10. Machine Learning Models (Part B: Gradient Boosting &amp; Multi-Target Architecture)</h2>
+  <div class="section-divider"></div>
+
+  <div class="card card-green">
+    <div class="card-title">🚀 10.3 Gradient Boosting Classifier (Sequential Residual Learning)</div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size: 7.5pt;"><strong>Mathematical Foundation:</strong> In contrast to bagging, Gradient Boosting constructs trees sequentially. Each new shallow regression tree fits the pseudo-residuals (negative gradients) of the multi-class log-loss:</p>
+        <div style="background: #0F172A; padding: 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.2pt; color: #10B981; margin-bottom: 5px; text-align: center;">
+          r_im = - [ ∂L(y_i, F(x_i)) / ∂F(x_i) ] at F = F_(m-1)
+        </div>
+        <p style="font-size: 7.5pt; margin-bottom: 0;">Predictions are updated via shrinkage rate η: F_m(x) = F_(m-1)(x) + η · h_m(x), performing gradient descent directly in function space.</p>
+      </div>
+      <div>
+        <table style="margin: 0; font-size: 7.2pt;">
+          <tr><th>Parameter</th><th>Repository Value</th><th>Engineering Justification</th></tr>
+          <tr><td><code>n_estimators</code></td><td>200</td><td>200 sequential additive boosting stages</td></tr>
+          <tr><td><code>learning_rate</code></td><td>0.1</td><td>Shrinkage factor η preventing premature convergence to local minima</td></tr>
+          <tr><td><code>max_depth</code></td><td>3</td><td>Shallow decision trees (stumps) limiting model capacity to avoid overfitting</td></tr>
+          <tr><td><code>random_state</code></td><td>42</td><td>Reproducible sub-sampling and tree construction</td></tr>
+        </table>
+      </div>
+    </div>
+    <p style="font-size: 7.5pt; margin-top: 5px; margin-bottom: 0;"><strong>The Valve Condition Champion:</strong> Gradient Boosting achieved the highest overall score on Directional Valve Condition (97.05%), because its iterative residual minimization specifically corrects the subtle misclassifications between adjacent switching lag states (80% vs 90%).</p>
+  </div>
+
+  <div class="figure-container" style="margin-top: 8px;">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/ml_pipeline.png" alt="Multi Target Pipeline" style="max-height: 175px;">
+    <div class="figure-caption"><strong>Figure 7:</strong> Multi-Target Prediction Architecture — A Single 88-Feature Vector Dispatched Simultaneously to 5 Specialized Model Heads.</div>
+  </div>
+
+  <div class="card card-cyan" style="margin-top: 6px;">
+    <div class="card-title">🔍 Architectural Decision: Independent Single-Target Models vs. Unified Multi-Output Model</div>
+    <p style="font-size: 7.5pt; margin-bottom: 0;">A key objective specified in Project 11 is to evaluate single-target versus multi-output strategies. While a single multi-output decision tree can predict all 5 targets simultaneously, it enforces shared splitting criteria across all subsystems. In physical reality, <strong>cooler fouling and pump piston slip are governed by entirely independent physical mechanisms</strong>. Training 5 dedicated, specialized model heads allows each classifier to select optimal split thresholds tailored specifically to its component's physical signatures, achieving significantly superior cross-validated accuracy across all failure modes.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 11 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 11: Model Training Pipeline</span></div>
+  <h2>11. Model Training &amp; Persistence Pipeline</h2>
+  <div class="section-divider"></div>
+  <p>The complete model training and artifact generation pipeline is implemented in <code>run_pipeline.py</code>. The script executes autonomously to train 15 production models, perform 5-fold cross validation, generate diagnostic evaluation plots, and serialize artifacts for instant runtime inference.</p>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">📦 Model Artifact Serialization Inventory</div>
+      <p style="font-size: 7.2pt; margin-bottom: 5px;">All 15 trained models are persisted into <code>outputs/models/</code> using <code>joblib.dump()</code> with maximum compression:</p>
+      <table style="margin: 0; font-size: 7pt;">
+        <tr><th>Subsystem Target</th><th>Random Forest (.joblib)</th><th>Gradient Boosting (.joblib)</th><th>SVM (.joblib)</th></tr>
+        <tr><td>Cooler Condition</td><td><code>rf_Cooler_Condition</code> (211 KB)</td><td><code>gb_Cooler_Condition</code> (117 KB)</td><td><code>svm_Cooler_Condition</code> (141 KB)</td></tr>
+        <tr><td>Valve Condition</td><td><code>rf_Valve_Condition</code> (2,636 KB)</td><td><code>gb_Valve_Condition</code> (285 KB)</td><td><code>svm_Valve_Condition</code> (759 KB)</td></tr>
+        <tr><td>Pump Leakage</td><td><code>rf_Pump_Leakage</code> (941 KB)</td><td><code>gb_Pump_Leakage</code> (195 KB)</td><td><code>svm_Pump_Leakage</code> (422 KB)</td></tr>
+        <tr><td>Accumulator Pressure</td><td><code>rf_Accumulator_Pressure</code> (2,126 KB)</td><td><code>gb_Accumulator_Pressure</code> (291 KB)</td><td><code>svm_Accumulator_Pressure</code> (603 KB)</td></tr>
+        <tr><td>Stable Flag</td><td><code>rf_Stable_Flag</code> (1,004 KB)</td><td><code>gb_Stable_Flag</code> (77 KB)</td><td><code>svm_Stable_Flag</code> (313 KB)</td></tr>
+      </table>
+    </div>
+
+    <div class="card card-teal">
+      <div class="card-title">⚡ Streamlit Cloud Caching &amp; Loading Architecture</div>
+      <p style="font-size: 7.5pt; margin-bottom: 4px;">In <code>app.py</code>, model ingestion is wrapped inside Streamlit's resource caching decorator:</p>
+      <div style="background: #0F172A; padding: 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7pt; color: #38BDF8; margin-bottom: 5px;">
+        @st.cache_resource<br>
+        def load_models():<br>
+        &nbsp;&nbsp;models = {'rf': {}, 'svm': {}, 'gb': {}}<br>
+        &nbsp;&nbsp;for t in TARGET_COLS:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;models['rf'][t] = joblib.load(f'outputs/models/rf_{t}.joblib')<br>
+        &nbsp;&nbsp;return models
+      </div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;"><strong>Performance Advantage:</strong> Models are deserialized exactly once into memory upon server startup. Subsequent user diagnostic requests execute purely in-memory with sub-50ms inference latency.</p>
+    </div>
+  </div>
+
+  <div class="card card-amber" style="margin-top: 8px;">
+    <div class="card-title">🛡️ Self-Healing Cloud Fallback Engine</div>
+    <p style="font-size: 7.8pt; margin-bottom: 0;">To ensure 100% deployment reliability when hosting across diverse Linux container environments on Streamlit Community Cloud (where binary pickle mismatches might occur between Python minor versions), <code>app.py</code> includes an automated self-healing fallback block. If any <code>.joblib</code> artifact fails to load, the application automatically catches the exception, re-trains the specific model head in memory on <code>hydraulic_preprocessed_dataset.csv</code>, and populates the model dictionary without interrupting user service or raising an error screen.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 12 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 12: Model Performance &amp; Benchmark Results</span></div>
+  <h2>12. Model Performance &amp; Benchmark Results</h2>
+  <div class="section-divider"></div>
+  <p>The official benchmark evaluation results are extracted directly from <code>outputs/model_comparison_results.csv</code>, recorded on the 441-cycle holdout test set (20% split). Rather than declaring an arbitrary overall winner, the results are presented target-by-target to highlight algorithm performance across distinct physical degradation modes.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Target Subsystem</th>
+        <th>Random Forest Test Accuracy</th>
+        <th>Support Vector Machine Test Accuracy</th>
+        <th>Gradient Boosting Test Accuracy</th>
+        <th>Best Performing Algorithm</th>
+        <th>Physical Significance of Result</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Cooler_Condition</strong></td>
+        <td style="color: #10B981; font-weight: 700;">1.0000 (100.0%)</td>
+        <td style="color: #10B981; font-weight: 700;">1.0000 (100.0%)</td>
+        <td style="color: #10B981; font-weight: 700;">1.0000 (100.0%)</td>
+        <td><span class="badge badge-green">Tied (All 3 Models)</span></td>
+        <td>Thermal gradient separation across radiator is mathematically distinct; 0 misclassifications across 441 runs.</td>
+      </tr>
+      <tr>
+        <td><strong>Valve_Condition</strong></td>
+        <td>0.9546 (95.46%)</td>
+        <td>0.7982 (79.82%)</td>
+        <td style="color: #10B981; font-weight: 700;">0.9705 (97.05%)</td>
+        <td><span class="badge badge-cyan">Gradient Boosting</span></td>
+        <td>Sequential residual boosting captures subtle non-linear switching lags (80% vs 90%) where SVM struggles.</td>
+      </tr>
+      <tr>
+        <td><strong>Pump_Leakage</strong></td>
+        <td style="color: #10B981; font-weight: 700;">0.9955 (99.55%)</td>
+        <td>0.9864 (98.64%)</td>
+        <td>0.9887 (98.87%)</td>
+        <td><span class="badge badge-green">Random Forest</span></td>
+        <td>Bagging reduces variance across noisy electric motor power (EPS1) and flow (FS1) dynamics.</td>
+      </tr>
+      <tr>
+        <td><strong>Accumulator_Pressure</strong></td>
+        <td style="color: #10B981; font-weight: 700;">0.9751 (97.51%)</td>
+        <td>0.8934 (89.34%)</td>
+        <td>0.9637 (96.37%)</td>
+        <td><span class="badge badge-green">Random Forest</span></td>
+        <td>Accurately discriminates 90 bar vs 100 bar vs 115 bar gas precharge levels from line pressure transients.</td>
+      </tr>
+      <tr>
+        <td><strong>Stable_Flag</strong></td>
+        <td style="color: #10B981; font-weight: 700;">0.9751 (97.51%)</td>
+        <td>0.9615 (9615%)</td>
+        <td>0.9728 (97.28%)</td>
+        <td><span class="badge badge-green">Random Forest</span></td>
+        <td>Ensemble thresholding detects erratic pressure hunting across multi-sensor variance features.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/plots/model_comparison_by_target.png" alt="Model Comparison Plot" style="max-height: 185px;">
+    <div class="figure-caption"><strong>Figure 8:</strong> Benchmark Model Comparison by Target Component (Extracted from <code>outputs/plots/model_comparison_by_target.png</code>).</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">💡 Why Gradient Boosting Won on Valve Condition</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">Valve spool degradation manifests as continuous mechanical friction. The transition from 100% switching speed down to 90% and 80% creates subtle, overlapping distributions in <code>PS1_slope</code>. Gradient Boosting's sequential focus on hard-to-classify boundary instances enabled it to achieve 97.05%, outperforming Random Forest by +1.59% and SVM by +17.23%.</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">🌲 Why Random Forest Dominated 4 Out of 5 Targets</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">For Cooler, Pump, Accumulator, and Stability, degradation modes are discrete physical steps. Random Forest's feature subsampling (evaluating ~9 features per node) prevents dominant pressure features from masking subtle flow features, maximizing ensemble diversity and variance reduction.</p>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 13 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 13: Cross-Validation Analysis</span></div>
+  <h2>13. Cross-Validation Analysis &amp; Fold Stability</h2>
+  <div class="section-divider"></div>
+  <p>To verify that high test benchmark accuracies were not an artifact of a fortunate train/test split, a comprehensive <strong>5-Fold Stratified Cross-Validation</strong> was executed on the Random Forest models across the entire 1,764-cycle training dataset. The exact results, extracted from <code>outputs/rf_cv_results.csv</code>, confirm exceptional model stability.</p>
+
+  <div class="grid-2">
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Target Subsystem</th>
+            <th>5-Fold CV Mean Accuracy</th>
+            <th>Standard Deviation (σ)</th>
+            <th>Stability Assessment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Cooler_Condition</strong></td>
+            <td style="color: #10B981; font-weight: 700;">0.9972 (99.72%)</td>
+            <td>± 0.0018 (0.18%)</td>
+            <td><span class="badge badge-green">Extremely High</span></td>
+          </tr>
+          <tr>
+            <td><strong>Pump_Leakage</strong></td>
+            <td style="color: #10B981; font-weight: 700;">0.9932 (99.32%)</td>
+            <td>± 0.0046 (0.46%)</td>
+            <td><span class="badge badge-green">Extremely High</span></td>
+          </tr>
+          <tr>
+            <td><strong>Accumulator_Pressure</strong></td>
+            <td style="color: #10B981; font-weight: 700;">0.9717 (97.17%)</td>
+            <td>± 0.0095 (0.95%)</td>
+            <td><span class="badge badge-cyan">Very High</span></td>
+          </tr>
+          <tr>
+            <td><strong>Stable_Flag</strong></td>
+            <td style="color: #10B981; font-weight: 700;">0.9581 (95.81%)</td>
+            <td>± 0.0138 (1.38%)</td>
+            <td><span class="badge badge-cyan">High</span></td>
+          </tr>
+          <tr>
+            <td><strong>Valve_Condition</strong></td>
+            <td style="color: #10B981; font-weight: 700;">0.9365 (93.65%)</td>
+            <td>± 0.0194 (1.94%)</td>
+            <td><span class="badge badge-amber">Good Stability</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="card card-teal" style="margin-top: 8px;">
+        <div class="card-title">🔬 Statistical Rigor &amp; Overfitting Defense</div>
+        <p style="font-size: 7.5pt; margin-bottom: 0;">The standard deviation across all folds remains below 2% across every target (and below 0.5% for Cooler and Pump). This narrow error band proves that the Random Forest classifiers are not memorizing dataset-specific idiosyncrasies, but have learned generalized decision boundaries that transfer reliably across arbitrary operational subsets.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="figure-container" style="margin: 0;">
+        <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/rf_cv_performance.png" alt="RF CV Performance" style="max-height: 220px;">
+        <div class="figure-caption"><strong>Figure 9:</strong> Random Forest 5-Fold Stratified Cross-Validation Accuracy &amp; Standard Deviation Error Bars.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-cyan" style="margin-top: 10px;">
+    <div class="card-title">📌 Comparison: Holdout Test Accuracy vs. Cross-Validation Mean</div>
+    <p style="font-size: 7.8pt; margin-bottom: 0;">Comparing the holdout test accuracy against the 5-fold cross-validation mean reveals remarkable consistency: <strong>Cooler Condition</strong> (Test 1.0000 vs. CV 0.9972), <strong>Pump Leakage</strong> (Test 0.9955 vs. CV 0.9932), <strong>Accumulator Pressure</strong> (Test 0.9751 vs. CV 0.9717), and <strong>Stable Flag</strong> (Test 0.9751 vs. CV 0.9581). This tight convergence confirms that the holdout test set is truly representative and that model metrics reflect genuine diagnostic capability.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 14 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 14: Confusion Matrix Analysis (Cooler)</span></div>
+  <h2>14. Confusion Matrix Analysis (Part A: Cooler Heat Exchanger)</h2>
+  <div class="section-divider"></div>
+  <p>Confusion matrix analysis provides granular visibility into class-level performance, true positive rates, and specific failure-mode misclassifications. Figure 10 presents the high-resolution confusion matrix for Random Forest on <strong>Cooler_Condition</strong>.</p>
+
+  <div class="grid-2">
+    <div>
+      <div class="figure-container" style="margin: 0;">
+        <img src="file:///e:/ML - HCL/Final Project/outputs/plots/confusion_matrix_cooler_rf.png" alt="Cooler Confusion Matrix" style="max-height: 230px;">
+        <div class="figure-caption"><strong>Figure 10:</strong> Random Forest Confusion Matrix for Cooler Condition on Holdout Test Set (N = 441 cycles).</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card card-green">
+        <div class="card-title">✅ Perfect Classification Diagnostic Breakdown</div>
+        <table style="margin: 4px 0 6px 0; font-size: 7.2pt;">
+          <tr><th>Cooler Degradation Class</th><th>True Instances</th><th>Predicted Correct</th><th>Classification Accuracy</th></tr>
+          <tr><td><strong>Class 0 (3% Total Failure)</strong></td><td>146</td><td>146</td><td style="color: #10B981; font-weight: 700;">100.0%</td></tr>
+          <tr><td><strong>Class 1 (20% Reduced)</strong></td><td>147</td><td>147</td><td style="color: #10B981; font-weight: 700;">100.0%</td></tr>
+          <tr><td><strong>Class 2 (100% Full Nominal)</strong></td><td>148</td><td>148</td><td style="color: #10B981; font-weight: 700;">100.0%</td></tr>
+        </table>
+        <p style="font-size: 7.5pt; margin-bottom: 0;"><strong>Zero Off-Diagonal Errors:</strong> Out of 441 test instances, exactly 0 false positives and 0 false negatives were recorded. Every single degraded cooler cycle was distinguished from healthy cycles without exception.</p>
+      </div>
+
+      <div class="card card-cyan" style="margin-top: 6px;">
+        <div class="card-title">🌡️ Thermodynamic Physical Interpretation</div>
+        <p style="font-size: 7.5pt; margin-bottom: 0;">The thermodynamic physics governing hydraulic heat dissipation creates strong, distinct signal separations:</p>
+        <ul style="font-size: 7.2pt; margin-bottom: 0; margin-top: 3px;">
+          <li>When cooling efficiency drops to 3%, oil entering the radiator cannot dissipate heat to the water circuit, causing reservoir temperature <code>TS1</code> to rise continuously and increasing <code>TS1_range</code>.</li>
+          <li>At 20% efficiency, partial heat dissipation occurs, establishing an intermediate equilibrium slope in <code>CE_slope</code> and <code>CE_std</code>.</li>
+          <li>At 100% efficiency, temperature stabilizes rapidly between 40°C and 45°C.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-teal" style="margin-top: 8px;">
+    <div class="card-title">🏭 Operational Value for Factory Plant Operations</div>
+    <p style="font-size: 7.8pt; margin-bottom: 0;">A 100% accurate cooler classification guarantees that thermal fouling is detected long before high oil temperatures cause irreversible seal hardening, fluid varnish deposition, and servo-valve seizure. Maintenance crews receive timely warnings to flush cooling lines without false alarms interrupting production.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 15 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 14: Confusion Matrix Analysis (Valve)</span></div>
+  <h2>14. Confusion Matrix Analysis (Part B: Directional Spool Valve)</h2>
+  <div class="section-divider"></div>
+  <p>Directional valve condition monitoring represents the most nuanced diagnostic challenge in the test rig. The valve transitions across 4 discrete states: 100% (Optimal), 90% (Small Lag), 80% (Severe Lag), and 73% (Near Failure). Figure 11 displays the confusion matrix for Random Forest.</p>
+
+  <div class="grid-2">
+    <div>
+      <div class="figure-container" style="margin: 0;">
+        <img src="file:///e:/ML - HCL/Final Project/outputs/plots/confusion_matrix_valve_rf.png" alt="Valve Confusion Matrix" style="max-height: 230px;">
+        <div class="figure-caption"><strong>Figure 11:</strong> Random Forest Confusion Matrix for Directional Valve Condition (Test Set N = 441 cycles).</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card card-cyan">
+        <div class="card-title">📊 Granular Class-by-Class Breakdown</div>
+        <table style="margin: 4px 0 6px 0; font-size: 7.2pt;">
+          <tr><th>Valve Degradation State</th><th>True Samples</th><th>Correct</th><th>Accuracy</th></tr>
+          <tr><td><strong>Class 0 (73% Critical Failure)</strong></td><td>72</td><td>70</td><td style="color: #10B981; font-weight: 700;">97.2%</td></tr>
+          <tr><td><strong>Class 1 (80% Severe Lag)</strong></td><td>72</td><td>65</td><td style="color: #F59E0B; font-weight: 700;">90.3%</td></tr>
+          <tr><td><strong>Class 2 (90% Small Lag)</strong></td><td>72</td><td>61</td><td style="color: #F59E0B; font-weight: 700;">84.7%</td></tr>
+          <tr><td><strong>Class 3 (100% Optimal)</strong></td><td>225</td><td>225</td><td style="color: #10B981; font-weight: 700;">100.0%</td></tr>
+        </table>
+        <p style="font-size: 7.5pt; margin-bottom: 0;"><strong>Total Correct:</strong> 421 / 441 instances (95.46% accuracy). Notably, <strong>Class 3 (100% Optimal)</strong> achieved a perfect 225/225 (100.0%), meaning healthy valves are never misdiagnosed as faulty.</p>
+      </div>
+
+      <div class="card card-amber" style="margin-top: 6px;">
+        <div class="card-title">🔍 Physical Analysis of Misclassifications</div>
+        <p style="font-size: 7.5pt; margin-bottom: 0;">Notice the off-diagonal errors:</p>
+        <ul style="font-size: 7.2pt; margin-bottom: 0; margin-top: 3px;">
+          <li>11 samples of Class 2 (90%) are misclassified as Class 1 (80%).</li>
+          <li>7 samples of Class 1 (80%) are misclassified as Class 2 (90%).</li>
+          <li>2 samples of Class 0 (73%) are misclassified as Class 1 (80%).</li>
+          <li><strong>Zero confusion with Class 3 (100%):</strong> Faulty valves are never mistaken for healthy ones.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-teal" style="margin-top: 8px;">
+    <div class="card-title">⚙️ Mechanical Justification: Continuous Siltation Mechanics</div>
+    <p style="font-size: 7.8pt; margin-bottom: 0;">In physical hydraulic machinery, valve spool wear is not a sharp discrete step but a continuous gradation of silting particles binding the spool cartridge. A valve with 89% switching speed and one with 91% switching speed exhibit near-identical transient pressure slopes (<code>PS1_slope</code>). Misclassifications occur strictly between adjacent wear stages. From a maintenance perspective, classifying a 90% lag as 80% lag is safe—both trigger a warning advisory to inspect the pilot pressure lines before complete seizure occurs.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 16 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 15: Feature Importance Analysis</span></div>
+  <h2>15. Feature Importance &amp; Physics Interpretation</h2>
+  <div class="section-divider"></div>
+  <p>To validate that the machine learning models learn legitimate physical phenomena rather than spurious statistical noise, feature importance was extracted across all 300 decision trees via Mean Decrease in Impurity (MDI / Gini Importance). Figure 12 displays the top features driving Cooler Condition classification.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/plots/rf_feature_importance_cooler.png" alt="Feature Importance Plot" style="max-height: 195px;">
+    <div class="figure-caption"><strong>Figure 12:</strong> Random Forest Feature Importance for Cooler Condition Classification (Extracted from <code>outputs/plots/rf_feature_importance_cooler.png</code>).</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">🏆 Top Influential Features &amp; Physical Meaning</div>
+      <table style="margin: 3px 0 0 0; font-size: 7.2pt;">
+        <tr><th>Feature ID</th><th>Relative Importance</th><th>Physical Interpretation in Test Rig</th></tr>
+        <tr><td><code>TS1_range</code></td><td style="color: #38BDF8; font-weight: 700;">Dominant Top Feature</td><td>Peak-to-peak oil temp variation in reservoir during 60s cycle. When cooler fails, oil heats rapidly without dissipating.</td></tr>
+        <tr><td><code>CE_std</code></td><td style="color: #38BDF8; font-weight: 700;">High Importance</td><td>Std dev of cooling efficiency. Degraded coolers cause erratic thermal regulation fluctuations.</td></tr>
+        <tr><td><code>TS1_std</code></td><td style="color: #38BDF8; font-weight: 700;">High Importance</td><td>Cyclic std dev of reservoir temp, reflecting thermal gradient instability.</td></tr>
+        <tr><td><code>CE_slope</code></td><td style="color: #38BDF8; font-weight: 700;">Moderate Importance</td><td>Transient rate of cooling efficiency change as hot oil enters heat exchanger.</td></tr>
+        <tr><td><code>TS2_mean</code></td><td style="color: #38BDF8; font-weight: 700;">Moderate Importance</td><td>Mean temperature at pump outlet, tracking heat accumulation across fluid loop.</td></tr>
+      </table>
+    </div>
+
+    <div class="card card-teal">
+      <div class="card-title">🔬 Physics-Informed ML Validation</div>
+      <p style="font-size: 7.5pt; margin-bottom: 3px;">The empirical feature importance ranking aligns directly with first-principles hydraulic thermodynamics:</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 0;">
+        <li><strong>Thermal Dominance:</strong> Temperature metrics (<code>TS1</code>, <code>TS2</code>) and efficiency factors (<code>CE</code>) completely dominate the top ranks for Cooler Condition, while pressure features (<code>PS1</code>–<code>PS6</code>) rank much lower.</li>
+        <li>Conversely, for <strong>Pump Leakage</strong>, electric motor power (<code>EPS1_mean</code>) and volume flow rate (<code>FS1_max</code>) are the primary drivers.</li>
+        <li>For <strong>Valve Condition</strong>, pressure transient slope (<code>PS1_slope</code>) is the primary driver.</li>
+      </ul>
+      <p style="font-size: 7.5pt; margin-top: 4px; margin-bottom: 0;">This rigorous alignment proves that the feature engineering pipeline successfully preserved physical causality.</p>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 17 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 16: Exploratory Data Analysis &amp; Correlations</span></div>
+  <h2>16. Exploratory Data Analysis &amp; Feature Correlations</h2>
+  <div class="section-divider"></div>
+  <p>Exploratory Data Analysis was performed to evaluate signal coupling, multi-collinearity, and cross-sensor dependencies across the 2,205 working cycles. Figure 13 displays the correlation matrix computed across the first 20 engineered features.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/plots/correlation_first_20_features.png" alt="Correlation Heatmap" style="max-height: 215px;">
+    <div class="figure-caption"><strong>Figure 13:</strong> Pearson Correlation Heatmap of First 20 Engineered Features (Extracted from <code>outputs/plots/correlation_first_20_features.png</code>).</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">🔍 Observations on Sensor Inter-Correlations</div>
+      <ul style="font-size: 7.5pt; margin-bottom: 0;">
+        <li><strong>Strong Intra-Sensor Blocks:</strong> Features derived from the same pressure transducer (e.g. <code>PS1_mean</code>, <code>PS1_median</code>, <code>PS1_min</code>) exhibit extreme positive correlations (r &gt; 0.95), visible as bright red square clusters along the diagonal.</li>
+        <li><strong>Pressure-Flow Inversion:</strong> Relief pressure spikes correlate negatively with primary volume flow (<code>FS1</code>), matching Bernoulli's principle and flow continuity across orifices.</li>
+        <li><strong>Thermal Decoupling:</strong> Temperature metrics (<code>TS1</code>–<code>TS4</code>) exhibit low instantaneous correlation with high-frequency pressure spikes (r ~ 0.1 to 0.3), confirming thermal dynamics operate on a much slower time constant.</li>
+      </ul>
+    </div>
+
+    <div class="card card-teal">
+      <div class="card-title">🛡️ Justification for Collinearity Filtering</div>
+      <p style="font-size: 7.5pt; margin-bottom: 4px;">The presence of deep red blocks along the diagonal in Figure 13 provides empirical justification for the <strong>Pearson collinearity filter (|r| &gt; 0.97)</strong> implemented in the pipeline:</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 0;">
+        <li>Without filtering, collinear features inflate tree split search times without providing new information.</li>
+        <li>For linear and kernel models (SVM), multi-collinearity destabilizes weight estimation and degrades generalization.</li>
+        <li>By removing 83 redundant channels, the pipeline retains only independent descriptors, achieving a clean 88-dimensional state representation.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 18 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 17: Application Architecture &amp; Dashboard</span></div>
+  <h2>17. Application Architecture &amp; Streamlit Dashboard</h2>
+  <div class="section-divider"></div>
+  <p>The interactive deployment interface is implemented in <code>app.py</code> (1,190 lines of production Python) and hosted live on Streamlit Community Cloud. Designed with an industrial digital-twin cockpit aesthetic, it provides operators with 6 specialized diagnostic modules.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/dashboard_architecture.png" alt="Dashboard Architecture" style="max-height: 170px;">
+    <div class="figure-caption"><strong>Figure 14:</strong> Streamlit Application Modular Architecture — 6 Integrated Diagnostic &amp; Simulation Tabs.</div>
+  </div>
+
+  <div class="figure-container" style="margin-top: 6px;">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/streamlit_live_app_1789671375961.png" alt="Streamlit Live App" style="max-height: 175px;">
+    <div class="figure-caption"><strong>Figure 15:</strong> Live Streamlit Digital Twin Cockpit Interface Deployed at <code>https://hydraulic-ai-monitor.streamlit.app/</code>.</div>
+  </div>
+
+  <div class="grid-3" style="margin-top: 6px;">
+    <div class="card card-cyan">
+      <div class="card-title">🎨 Theme Engine</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">Full dual-theme support (Dark Navy industrial theme and crisp Light mode) with custom CSS injected via <code>st.markdown()</code>, featuring glassmorphism cards and high-contrast text.</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">🤖 AI Engine Selector</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">Sidebar dropdown allows operators to switch inference engines dynamically: Random Forest, Gradient Boosting, SVM, or Consensus Voting.</p>
+    </div>
+    <div class="card card-green">
+      <div class="card-title">⚡ Sub-50ms Latency</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">All 15 models cached in memory via <code>@st.cache_resource</code>, enabling real-time telemetry updates and instantaneous parameter sweeps.</p>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 19 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 17: Dashboard Deep Dive (Live Cockpit)</span></div>
+  <h2>17. Dashboard Deep Dive (Part B: Live Diagnostics Cockpit)</h2>
+  <div class="section-divider"></div>
+  <p>Tab 1 (<strong>Live Cycle Diagnostics &amp; Scenario Simulator</strong>) serves as the primary operational cockpit. It visualizes the complete state of the hydraulic rig for any given cycle, computing a composite health score and rendering individualized subsystem diagnostic cards.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/dark_mode_cockpit_cards_1789669383528.png" alt="Cockpit Cards" style="max-height: 175px;">
+    <div class="figure-caption"><strong>Figure 16:</strong> Live Subsystem Diagnostic Cards — Displaying Predicted Health State, Confidence, and Action Recommendations.</div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 6px;">
+    <div>
+      <div class="figure-container" style="margin: 0;">
+        <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/gauge_radar_charts_1789668748025.png" alt="Gauge and Radar Charts" style="max-height: 170px;">
+        <div class="figure-caption"><strong>Figure 17:</strong> Composite System Health Gauge (Left) and Multi-Subsystem Health Radar Profile (Right).</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card card-cyan">
+        <div class="card-title">🎛️ Diagnostic Cockpit Features</div>
+        <ul style="font-size: 7.5pt; margin-bottom: 0;">
+          <li><strong>Composite System Health Score:</strong> A weighted 0–100 gauge synthesizing health across all 5 subsystems into a single executive KPI.</li>
+          <li><strong>Subsystem Radar Profile:</strong> Multi-axis Plotly radar chart displaying relative component health (Cooler, Valve, Pump, Accumulator, Stability) simultaneously.</li>
+          <li><strong>Individual Component Cards:</strong> Each card displays the component title, predicted state, severity badge pill (Healthy, Warning, Critical), confidence percentage, and recommended action.</li>
+          <li><strong>Immediate Maintenance Actions:</strong> Concrete mechanical directives (e.g. "Flush radiator lines", "Inspect spool valve cartridge for galling").</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 20 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 18: What-If Sensitivity Studio</span></div>
+  <h2>18. What-If Sensitivity Studio &amp; Dynamic Sweeps</h2>
+  <div class="section-divider"></div>
+  <p>Tab 2 (<strong>What-If Sensitivity Studio &amp; Decision Boundaries</strong>) implements a powerful interactive digital-twin simulation engine. It enables hydraulic engineers to test hypothetical operating conditions in software, observing how failure probabilities shift as physical sensor features change.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/whatif_workflow.png" alt="What-If Workflow" style="max-height: 140px;">
+    <div class="figure-caption"><strong>Figure 18:</strong> What-If Sensitivity Studio Algorithmic Workflow — From Sensor Selection to Probability Curve Sweep.</div>
+  </div>
+
+  <div class="figure-container" style="margin-top: 6px;">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/sensitivity_studio_1789668786519.png" alt="Sensitivity Studio UI" style="max-height: 190px;">
+    <div class="figure-caption"><strong>Figure 19:</strong> Interactive What-If Sensitivity Studio UI — Multi-Class Probability Curves Swept Across 40 Synthetic Sensor Steps.</div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 6px;">
+    <div class="card card-cyan">
+      <div class="card-title">📈 40-Step Probability Curve Generation</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">When a user selects a target and a driving sensor feature (e.g. <code>TS1_range</code> for Cooler Condition), the application extracts the minimum and maximum bounds from the dataset, generates a 40-point linear sweep vector, aligns all other 87 features to median operating baselines, calls <code>predict_proba()</code> across all 40 vectors, and plots continuous multi-class probability curves.</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">🎯 Detecting Critical Tipping Boundaries</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">A vertical dashed marker indicates the machine's current operating point. As the engineer drags sliders, they observe exactly where the curve crosses the 50% probability threshold—identifying the exact physical boundary where a component transitions from "Healthy" to "Critical Failure" before running the physical machine into danger.</p>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 21 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 18: Operating Scenario Presets</span></div>
+  <h2>18. What-If Sensitivity Studio (Part B: Operating Scenario Presets)</h2>
+  <div class="section-divider"></div>
+  <p>To demonstrate real-world physical fault scenarios without requiring manual tuning of 88 individual sliders, the application integrates 6 pre-configured physical operating scenarios linked to ground-truth cycle indices from the experimental test logs.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Scenario Preset Name</th>
+        <th>Ground-Truth Cycle Index</th>
+        <th>Target Component Affected</th>
+        <th>Physical Operating Condition Simulated</th>
+        <th>Observed System Impact</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>🟢 Nominal Healthy Baseline</strong></td>
+        <td><code>Cycle #1664</code></td>
+        <td>All 5 Subsystems (100%)</td>
+        <td>Pristine baseline operating state; fully charged accumulator (130 bar), clean cooler, tight pump slipper clearances, clean spool valve.</td>
+        <td>Composite Health Score: 100/100; all diagnostic cards show green Healthy badges.</td>
+      </tr>
+      <tr>
+        <td><strong>🔴 Critical Cooler Heat-Exchanger Failure</strong></td>
+        <td><code>Cycle #0</code></td>
+        <td>Cooler Heat Exchanger (3%)</td>
+        <td>Radiator core completely fouled; cooling water flow throttled. Severe heat accumulation.</td>
+        <td>Reservoir temperature rises rapidly; Cooler card trips to Critical (3% efficiency); triggers shutdown advisory.</td>
+      </tr>
+      <tr>
+        <td><strong>🟠 Directional Valve Mechanical Sticking</strong></td>
+        <td><code>Cycle #211</code></td>
+        <td>Directional Valve (80%)</td>
+        <td>Particulate contamination causing spool galling; pilot switching delay creates pressure lag.</td>
+        <td>Valve card trips to Warning/Critical (80% Severe Lag); recommends cartridge replacement.</td>
+      </tr>
+      <tr>
+        <td><strong>🔴 Severe Hydraulic Pump Volumetric Slip</strong></td>
+        <td><code>Cycle #210</code></td>
+        <td>Axial Piston Pump (Class 2)</td>
+        <td>Severe slipper shoe wear; high-pressure fluid bypasses directly to case drain.</td>
+        <td>Motor power <code>EPS1</code> spikes to maintain relief pressure; Pump card trips to Critical Leakage.</td>
+      </tr>
+      <tr>
+        <td><strong>🟡 Hydraulic Accumulator Depressurization</strong></td>
+        <td><code>Cycle #599</code></td>
+        <td>Bladder Accumulator (90 bar)</td>
+        <td>Nitrogen gas diffused through elastomer bladder; loss of damping reserve volume.</td>
+        <td>Line pressure exhibits severe pulsation spikes; Accumulator card trips to 90 bar Critical Shock Hazard.</td>
+      </tr>
+      <tr>
+        <td><strong>⚠️ Dynamic Pressure Oscillation &amp; Instability</strong></td>
+        <td><code>Cycle #15</code></td>
+        <td>Stability Flag (Class 0)</td>
+        <td>Entrained air in hydraulic fluid and relief valve hunting; erratic cyclic repeatability.</td>
+        <td>Stability Flag drops to 0 (Dynamic Instability); advises PID controller retuning and air bleeding.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card card-cyan" style="margin-top: 8px;">
+    <div class="card-title">🎚️ Dynamic Subsystem Sensor Control Sliders</div>
+    <p style="font-size: 7.5pt; margin-bottom: 4px;">Operators can fine-tune specific sensor features to test custom operating states:</p>
+    <div class="grid-2" style="font-size: 7.2pt;">
+      <div>
+        • <strong>Electric Motor Power (EPS1 mean):</strong> 2,200 W to 3,400 W (Simulates pump load &amp; bypass friction)<br>
+        • <strong>Primary Volume Flow Peak (FS1 max):</strong> 10 to 45 L/min (Simulates throttling &amp; pump output)
+      </div>
+      <div>
+        • <strong>Main Relief Pressure (PS1 mean):</strong> 140 to 180 bar (Simulates line load variations)<br>
+        • <strong>Pressure Transient Rate (PS1 slope):</strong> -2.0 to 2.0 bar/s (Simulates valve switching response)
+      </div>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 22 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 19: Digital Twin Concept &amp; 3D Explorer</span></div>
+  <h2>19. Digital Twin Concept &amp; 3D Sensor Explorer</h2>
+  <div class="section-divider"></div>
+  <p>In modern Industry 4.0 literature, a <strong>Digital Twin</strong> is defined as a synchronized virtual representation of a physical asset that mirrors its operational state, simulates degradation, and predicts maintenance needs. The project implements a 5-layer digital twin architecture connecting physical test-rig dynamics to an interactive software cockpit.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/digital_twin_architecture.png" alt="Digital Twin Architecture" style="max-height: 175px;">
+    <div class="figure-caption"><strong>Figure 20:</strong> 5-Layer Digital Twin Framework — Physical Asset, Telemetry Stream, Digital State Shadow, AI Engine, and Cockpit.</div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="figure-container" style="margin: 0;">
+        <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/sensor_3d_cluster_1789668997964.png" alt="3D Sensor Cluster" style="max-height: 175px;">
+        <div class="figure-caption"><strong>Figure 21:</strong> 3D Sensor Cluster Explorer — Multi-Dimensional Manifold Separation across Hydraulic Degradation States.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card card-cyan">
+        <div class="card-title">🌐 3D Sensor Cluster Explorer (Tab 3)</div>
+        <p style="font-size: 7.5pt; margin-bottom: 4px;">Tab 3 allows engineers to project the 88-dimensional telemetry space into an interactive 3D scatter plot. Users select custom X, Y, and Z sensor features (e.g. <code>TS1_range</code>, <code>FS1_max</code>, <code>PS1_mean</code>) and color data points by any of the 5 condition targets.</p>
+        <p style="font-size: 7.5pt; margin-bottom: 0;"><strong>Diagnostic Value:</strong> Demonstrates that fault states naturally cluster into distinct geometric manifolds in sensor space, visually proving why machine learning classifiers achieve high separation boundaries.</p>
+      </div>
+
+      <div class="card card-teal" style="margin-top: 6px;">
+        <div class="card-title">▶️ Telemetry Stream Simulator (Tab 4)</div>
+        <p style="font-size: 7.5pt; margin-bottom: 0;">Simulates continuous IoT telemetry streaming over consecutive cycles with step controls, trend sparklines, and updating multi-target health indicators.</p>
+      </div>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 23 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 19: Batch Diagnostics &amp; Benchmark Analytics</span></div>
+  <h2>19. Dashboard Modules (Part B: Batch Diagnostics &amp; Analytics)</h2>
+  <div class="section-divider"></div>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">📁 Tab 5: Batch File Diagnostics</div>
+      <p style="font-size: 7.5pt; margin-bottom: 5px;">In production manufacturing, maintenance departments frequently collect telemetry logs spanning dozens or hundreds of operating cycles. The Batch Diagnostics module provides enterprise-scale automated file evaluation:</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 5px;">
+        <li><strong>CSV File Uploader:</strong> Accepts raw or preprocessed multi-cycle CSV files. Automatically validates feature columns and fills missing telemetry with baseline medians.</li>
+        <li><strong>Automated Multi-Row Inference:</strong> Dispatches all uploaded rows through all 5 model heads in parallel, evaluating hundreds of cycles in seconds.</li>
+        <li><strong>Diagnostic Results Table:</strong> Generates an interactive table detailing Cycle ID, individual component states, severity badges, and composite health scores.</li>
+        <li><strong>Exportable CSV Reports:</strong> Generates downloadable diagnostic summary reports for factory maintenance logging.</li>
+      </ul>
+      <div style="background: #0F172A; padding: 5px; border-radius: 4px; border: 1px solid #1E293B; font-size: 7pt; color: #38BDF8;">
+        <strong>Live Demo Mode:</strong> Users without their own CSV files can click <em>"Load Sample Test Instances"</em> to instantly evaluate 10 benchmark cycles.
+      </div>
+    </div>
+
+    <div class="card card-teal">
+      <div class="card-title">📊 Tab 6: Benchmark Analytics</div>
+      <p style="font-size: 7.5pt; margin-bottom: 5px;">The Benchmark Analytics tab embeds full empirical model evaluation evidence directly into the application interface:</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 5px;">
+        <li><strong>Interactive Accuracy Comparison:</strong> Renders bar charts comparing Random Forest, Support Vector Machines, and Gradient Boosting across all 5 targets.</li>
+        <li><strong>Cross-Validation Distributions:</strong> Displays 5-fold cross-validation mean accuracies and standard deviations for Random Forest.</li>
+        <li><strong>High-Resolution Confusion Matrices:</strong> Embeds the original confusion matrix plots for Cooler Condition and Valve Condition with detailed annotations.</li>
+        <li><strong>Feature Importance Breakdown:</strong> Displays Gini importance plots for all 5 subsystems, providing transparency into model decision criteria.</li>
+      </ul>
+      <div style="background: #0F172A; padding: 5px; border-radius: 4px; border: 1px solid #1E293B; font-size: 7pt; color: #10B981;">
+        <strong>Auditing Value:</strong> Guarantees complete transparency during plant evaluations, viva reviews, and academic assessments.
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-amber" style="margin-top: 8px;">
+    <div class="card-title">🛡️ Input Validation &amp; Automated Feature Alignment Protocol</div>
+    <p style="font-size: 7.5pt; margin-bottom: 0;">A critical reliability feature implemented in <code>predict_instance()</code> is automated feature alignment. Factory logs often contain missing columns, reordered headers, or extraneous metadata (e.g. timestamps, cycle numbers). The prediction engine dynamically reindexes incoming DataFrames against the exact 88-feature training signature (<code>feat_cols</code>), populating any missing columns with precomputed training medians (<code>feat_medians</code>). This prevents runtime schema crashes and ensures reliable operation.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 24 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 20: Condition Scoring &amp; Maintenance Logic</span></div>
+  <h2>20. Condition Scoring &amp; Maintenance Decision Logic</h2>
+  <div class="section-divider"></div>
+  <p>To bridge machine learning classifications and industrial maintenance execution, the repository implements a deterministic <strong>Condition Scoring and Maintenance Decision Logic Engine</strong>. Component health scores and actions are codified in <code>TARGET_CONFIG</code> within <code>app.py</code>.</p>
+
+  <div class="card card-cyan">
+    <div class="card-title">🧮 Composite System Health Score Formulation</div>
+    <p style="font-size: 7.5pt; margin-bottom: 3px;">The overall Composite Health Score (0–100) is calculated as a domain-weighted linear combination of individual component health scores:</p>
+    <div style="background: #0F172A; padding: 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.2pt; color: #38BDF8; margin-bottom: 4px; text-align: center;">
+      Composite Health = 0.20 · S_Cooler + 0.25 · S_Valve + 0.25 · S_Pump + 0.20 · S_Acc + 0.10 · S_Stability
+    </div>
+    <p style="font-size: 7.2pt; color: #94A3B8; margin-bottom: 0;">Weights reflect component criticality: Valves and Pumps are weighted at 25% due to catastrophic line seizure risk; Cooler and Accumulator at 20%; Cyclic Stability at 10%.</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Predicted State</th>
+        <th>Severity</th>
+        <th>Score</th>
+        <th>Physical Degradation Interpretation</th>
+        <th>Automated Maintenance Action Directive</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="3"><strong>Cooler Heat Exchanger</strong></td>
+        <td>Total Failure (3%)</td>
+        <td><span class="badge badge-red">Critical</span></td>
+        <td>10</td>
+        <td>Heat exchanger blocked or coolant loop failure; severe thermal buildup</td>
+        <td>🚨 Immediate Shutdown: Flush cooler radiator lines, verify cooling pump pressure, replace clogged filter cores.</td>
+      </tr>
+      <tr>
+        <td>Reduced Efficiency (20%)</td>
+        <td><span class="badge badge-amber">Warning</span></td>
+        <td>50</td>
+        <td>Cooler heavily fouled or flow throttled; degraded thermal dissipation</td>
+        <td>⚠️ Schedule Service: Clean cooling fins and inspect temperature regulating proportional valve.</td>
+      </tr>
+      <tr>
+        <td>Full Efficiency (100%)</td>
+        <td><span class="badge badge-green">Healthy</span></td>
+        <td>100</td>
+        <td>Nominal heat transfer rate; optimal operating temperatures</td>
+        <td>✅ Normal Operation: Oil temperatures within design envelope (40°C – 50°C).</td>
+      </tr>
+      <tr>
+        <td rowspan="4"><strong>Directional Spool Valve</strong></td>
+        <td>Near Total Failure (73%)</td>
+        <td><span class="badge badge-red">Critical</span></td>
+        <td>15</td>
+        <td>Severe mechanical binding or spool galling; imminent valve seizure</td>
+        <td>🚨 Urgent Intervention: Replace directional spool cartridge. Inspect fluid for particulate contamination (ISO 4406).</td>
+      </tr>
+      <tr>
+        <td>Severe Lag (80%)</td>
+        <td><span class="badge badge-red">Critical</span></td>
+        <td>40</td>
+        <td>High switching delay; erratic stroke cycle timing</td>
+        <td>🚨 Urgent Intervention: Check pilot line supply pressure and inspect solenoid excitation currents.</td>
+      </tr>
+      <tr>
+        <td>Small Lag (90%)</td>
+        <td><span class="badge badge-amber">Warning</span></td>
+        <td>75</td>
+        <td>Minor spool resistance or pilot fluid viscosity drag</td>
+        <td>⚠️ Maintenance Due: Inspect proportional valve control card and check pilot fluid viscosity.</td>
+      </tr>
+      <tr>
+        <td>Optimal Switching (100%)</td>
+        <td><span class="badge badge-green">Healthy</span></td>
+        <td>100</td>
+        <td>Crisp, repeatable directional switching under design limits</td>
+        <td>✅ Normal Operation: Clean pressure response slopes; no spool hysteresis.</td>
+      </tr>
+      <tr>
+        <td rowspan="3"><strong>Internal Piston Pump</strong></td>
+        <td>Severe Leakage (2)</td>
+        <td><span class="badge badge-red">Critical</span></td>
+        <td>15</td>
+        <td>Critical internal slip; motor draws higher power to maintain line pressure</td>
+        <td>🚨 High Failure Risk: Inspect axial swashplate shoes and cylinder block face. Case drain flow is excessive.</td>
+      </tr>
+      <tr>
+        <td>Weak Leakage (1)</td>
+        <td><span class="badge badge-amber">Warning</span></td>
+        <td>65</td>
+        <td>Minor internal bypass across swashplate and valve plate</td>
+        <td>⚠️ Monitor Closely: Track case drain temperature and motor power consumption (EPS1).</td>
+      </tr>
+      <tr>
+        <td>No Leakage (0)</td>
+        <td><span class="badge badge-green">Healthy</span></td>
+        <td>100</td>
+        <td>Volumetric efficiency &gt;95%; tight piston shoe clearances</td>
+        <td>✅ Normal Operation: Minimal bypass flow. Motor electric power is within baseline.</td>
+      </tr>
+      <tr>
+        <td rowspan="4"><strong>Hydraulic Accumulator</strong></td>
+        <td>Severely Depressurized (90 bar)</td>
+        <td><span class="badge badge-red">Critical</span></td>
+        <td>10</td>
+        <td>Dangerous nitrogen loss; high risk of hydraulic shock hammer</td>
+        <td>🚨 Shock Hazard: Depressurize circuit immediately and recharge nitrogen bladder to 130 bar. Inspect bladder for tears.</td>
+      </tr>
+      <tr>
+        <td>Severely Reduced (100 bar)</td>
+        <td><span class="badge badge-red">Critical</span></td>
+        <td>45</td>
+        <td>Substantial energy absorption loss during peak cycle demand</td>
+        <td>🚨 Shock Hazard: Schedule bladder recharge within 24 operating hours.</td>
+      </tr>
+      <tr>
+        <td>Slightly Reduced (115 bar)</td>
+        <td><span class="badge badge-amber">Warning</span></td>
+        <td>75</td>
+        <td>Permeation of nitrogen through elastomer bladder over running cycles</td>
+        <td>⚠️ Top-up Required: Nitrogen charge has diffused. Schedule gas charge servicing.</td>
+      </tr>
+      <tr>
+        <td>Optimal Precharge (130 bar)</td>
+        <td><span class="badge badge-green">Healthy</span></td>
+        <td>100</td>
+        <td>Full nitrogen charge; smooth hydraulic pulsation dampening</td>
+        <td>✅ Normal Operation: Peak pulsation dampening and reserve hydraulic energy optimal.</td>
+      </tr>
+      <tr>
+        <td rowspan="2"><strong>Cyclic Stability</strong></td>
+        <td>Dynamic Instability (0)</td>
+        <td><span class="badge badge-amber">Warning</span></td>
+        <td>40</td>
+        <td>Non-repeating pressure oscillations and erratic flow variations</td>
+        <td>🚨 Circuit Resonance: Check for entrained air in oil, verify relief valve damping, inspect accumulator gas volume.</td>
+      </tr>
+      <tr>
+        <td>Stable Operation (1)</td>
+        <td><span class="badge badge-green">Healthy</span></td>
+        <td>100</td>
+        <td>Hydraulic cycles adhere to tight steady-state repeatability limits</td>
+        <td>✅ Normal Operation: Cyclic pressure envelopes are consistent across all 60s windows.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 25 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 21: Software Architecture &amp; Section 22: Tech Stack</span></div>
+  <h2>21. Software Architecture &amp; Ecosystem Design</h2>
+  <div class="section-divider"></div>
+  <p>The codebase adheres to clean modular software engineering standards, establishing distinct boundaries between data processing, machine learning training, artifact serialization, and web presentation.</p>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">🧩 Architectural Layering</div>
+      <ul style="font-size: 7.5pt; margin-bottom: 0;">
+        <li><strong>Data Layer:</strong> High-performance tabular handling via Pandas and NumPy. Ingestion of raw 176-column CSVs, collinearity filtering, and feature array generation.</li>
+        <li><strong>ML Engine Layer:</strong> Scikit-Learn training pipelines featuring <code>RandomForestClassifier</code>, <code>GradientBoostingClassifier</code>, <code>SVC</code>, and <code>StandardScaler</code>.</li>
+        <li><strong>Persistence Layer:</strong> Joblib binary serialization storing 15 optimized models in <code>outputs/models/</code>.</li>
+        <li><strong>Presentation Layer:</strong> Streamlit web application with custom HTML/CSS injection, Plotly interactive graphics, and multi-threaded session state management.</li>
+      </ul>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">⚙️ Core Design Principles</div>
+      <ul style="font-size: 7.5pt; margin-bottom: 0;">
+        <li><strong>Stateless Model Inference:</strong> Prediction functions are purely functional—accepting feature DataFrames and returning JSON-serializable diagnostic dictionaries.</li>
+        <li><strong>Resource Caching:</strong> Zero redundant disk reads via <code>@st.cache_data</code> and <code>@st.cache_resource</code>.</li>
+        <li><strong>Graceful Degradation:</strong> Automated median fallback if user inputs contain missing sensor fields.</li>
+        <li><strong>Dual-Theme Isolation:</strong> CSS variables dynamically adapt chart backgrounds, fonts, and borders.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>22. Technology Stack &amp; Framework Cards</h2>
+  <div class="section-divider"></div>
+
+  <div class="grid-3">
+    <div class="card card-cyan">
+      <div class="card-title">🐍 Python 3.12</div>
+      <div style="font-size: 7.2pt; color: #94A3B8; margin-bottom: 3px;">Core Programming Runtime</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">Provides unified language runtime, strong typing support, high-performance C-extensions for scientific libraries, and seamless cross-platform execution.</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">📊 Scikit-Learn 1.6+</div>
+      <div style="font-size: 7.2pt; color: #94A3B8; margin-bottom: 3px;">Machine Learning Framework</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">Powers model training, stratified cross-validation, feature importance extraction, scaling transformations, and multi-class probabilistic inference.</p>
+    </div>
+    <div class="card card-green">
+      <div class="card-title">⚡ Streamlit 1.40+</div>
+      <div style="font-size: 7.2pt; color: #94A3B8; margin-bottom: 3px;">Web Application Framework</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">Renders real-time reactive UI, manages interactive session state, hosts user controls, and serves cloud web endpoints with zero JavaScript build overhead.</p>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card card-amber">
+      <div class="card-title">📈 Plotly &amp; Matplotlib</div>
+      <div style="font-size: 7.2pt; color: #94A3B8; margin-bottom: 3px;">Data Visualization Engines</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">Plotly generates interactive client-side 3D scatter plots, probability curves, and gauges. Matplotlib generates publication-grade static benchmark plots.</p>
+    </div>
+    <div class="card card-cyan">
+      <div class="card-title">💾 Joblib</div>
+      <div style="font-size: 7.2pt; color: #94A3B8; margin-bottom: 3px;">Model Serialization Engine</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">Provides fast, compressed binary disk persistence for complex scikit-learn estimators containing large NumPy arrays and decision tree structures.</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title">☁️ Streamlit Cloud &amp; Git</div>
+      <div style="font-size: 7.2pt; color: #94A3B8; margin-bottom: 3px;">CI/CD &amp; Cloud Deployment</div>
+      <p style="font-size: 7.2pt; margin-bottom: 0;">GitHub repository linked directly to Streamlit Community Cloud for automated continuous integration, container building, and zero-downtime redeployment.</p>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 26 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 24: Application Workflow &amp; User Journey</span></div>
+  <h2>24. Application Workflow &amp; Operator Journey</h2>
+  <div class="section-divider"></div>
+  <p>The application is engineered to support both frontline machine operators requiring instant health status and reliability engineers conducting deep sensitivity investigations. Figure 22 outlines the complete user journey.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/user_journey.png" alt="User Journey" style="max-height: 150px;">
+    <div class="figure-caption"><strong>Figure 22:</strong> End-to-End Operator &amp; Reliability Engineer User Journey Across Application Modules.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">📋 Step-by-Step Operator Workflow</div>
+      <ol style="font-size: 7.2pt; margin-bottom: 0; margin-left: 14px;">
+        <li><strong>Launch Application:</strong> Navigate to <code>hydraulic-ai-monitor.streamlit.app</code>. Choose visual theme (Dark/Light).</li>
+        <li><strong>Select AI Diagnostic Engine:</strong> Choose active model (Random Forest, Gradient Boosting, SVM, or Consensus Voting) from sidebar.</li>
+        <li><strong>Choose Operating Scenario:</strong> Select a physical preset (e.g. Healthy Baseline, Critical Cooler Failure) or adjust individual sensor sliders.</li>
+        <li><strong>Instant Multi-Target Inference:</strong> View overall Health Score (0–100) and examine 5 individual subsystem diagnostic cards.</li>
+        <li><strong>Review Maintenance Directives:</strong> Inspect concrete component recommendations (e.g. "Recharge accumulator nitrogen bladder").</li>
+      </ol>
+    </div>
+
+    <div class="card card-teal">
+      <div class="card-title">🔬 Advanced Engineering Investigations</div>
+      <ol style="font-size: 7.2pt; margin-bottom: 0; margin-left: 14px;">
+        <li><strong>What-If Sensitivity Testing:</strong> Navigate to Tab 2 to sweep driving sensors across 40 steps, observing failure probability transitions.</li>
+        <li><strong>3D Manifold Exploration:</strong> Navigate to Tab 3 to rotate multi-dimensional feature clusters and verify fault state separation.</li>
+        <li><strong>IoT Telemetry Streaming:</strong> Navigate to Tab 4 to simulate continuous real-time cycle playback with dynamic sparklines.</li>
+        <li><strong>Batch CSV Processing:</strong> Navigate to Tab 5 to upload multi-cycle factory logs, execute batch inference, and export diagnostic summary CSVs.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card card-green" style="margin-top: 6px;">
+    <div class="card-title">🤝 Model Consensus Engine Option</div>
+    <p style="font-size: 7.5pt; margin-bottom: 0;">In addition to individual model selection, the sidebar features a <strong>"Consensus Engine (Majority Vote)"</strong> mode. When activated, all 3 algorithm families (RF, SVM, GB) evaluate the cycle simultaneously. Predictions are accepted only when at least 2 out of 3 models agree, providing plant managers with an added layer of operational safety against single-algorithm anomalies.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 27 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 23: Model Deployment &amp; Cloud Serving</span></div>
+  <h2>23. Model Deployment &amp; Cloud Architecture</h2>
+  <div class="section-divider"></div>
+  <p>The deployment architecture bridges offline machine learning research and online industrial web serving, utilizing containerized cloud hosting on Streamlit Community Cloud backed by automated GitHub CI/CD synchronization.</p>
+
+  <div class="figure-container">
+    <img src="file:///e:/ML - HCL/Final Project/outputs/report_assets/deployment_architecture.png" alt="Deployment Architecture" style="max-height: 170px;">
+    <div class="figure-caption"><strong>Figure 23:</strong> Cloud Deployment Architecture — GitHub Repository Auto-Sync, In-Memory Caching, and Global HTTPS Serving.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">🌐 Production Deployment Specifications</div>
+      <table style="margin: 0; font-size: 7.2pt;">
+        <tr><th>Deployment Parameter</th><th>Specification / Value</th></tr>
+        <tr><td>Public URL Endpoint</td><td><a href="https://hydraulic-ai-monitor.streamlit.app/" target="_blank">https://hydraulic-ai-monitor.streamlit.app/</a></td></tr>
+        <tr><td>Cloud Host Provider</td><td>Streamlit Community Cloud (Debian Linux Container)</td></tr>
+        <tr><td>Python Runtime</td><td>Python 3.12 (Virtualenv Isolation)</td></tr>
+        <tr><td>Repository Source</td><td><code>SrimanKumarV/HCL-ML-Final-Project</code> (Main Branch)</td></tr>
+        <tr><td>Security Protocol</td><td>HTTPS / TLS 1.3 End-to-End Encryption</td></tr>
+        <tr><td>Serving Latency</td><td>&lt; 50 ms per multi-target diagnostic inference</td></tr>
+      </table>
+    </div>
+
+    <div class="card card-teal">
+      <div class="card-title">🔄 Continuous Integration &amp; Deployment Flow</div>
+      <p style="font-size: 7.5pt; margin-bottom: 3px;">The cloud deployment pipeline operates on automated Git triggers:</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 0;">
+        <li>Commits pushed to <code>origin/main</code> automatically trigger Streamlit Cloud webhooks.</li>
+        <li>Container dependencies are resolved from <code>requirements.txt</code>.</li>
+        <li>Web server process launches <code>app.py</code> in non-interactive headless mode.</li>
+        <li>Streamlit Cloud provisions dedicated CPU and RAM resources, automatically managing container health checks and crash recovery.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-amber" style="margin-top: 6px;">
+    <div class="card-title">🛡️ Keep-Alive &amp; Container Sleep Prevention Protocols</div>
+    <p style="font-size: 7.5pt; margin-bottom: 0;">Free-tier cloud platforms frequently spin down inactive applications after consecutive hours of inactivity. To ensure high availability for faculty evaluations, viva reviews, and student expos, automated HTTP pinging workflows (via GitHub Actions or external webhook pings) can be scheduled every 14 minutes. This maintains the application in a permanently warm state, guaranteeing zero loading delays when accessed by examiners.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 28 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 25: Results Discussion &amp; Insights</span></div>
+  <h2>25. Results Discussion &amp; Engineering Insights</h2>
+  <div class="section-divider"></div>
+  <p>The verified benchmark results demonstrate that multi-sensor machine learning provides an effective methodology for industrial hydraulic condition monitoring. This section provides comparative analysis of algorithmic behaviors, physical causality, and industrial business impact.</p>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">📊 Comparative Algorithmic Synthesis</div>
+      <p style="font-size: 7.5pt; margin-bottom: 3px;">Analyzing performance across the 5 targets reveals distinct algorithmic traits:</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 0;">
+        <li><strong>Random Forest:</strong> Demonstrated the greatest versatility, winning on 4 out of 5 targets (Cooler 100%, Pump 99.55%, Accumulator 97.51%, Stability 97.51%). Its feature bagging architecture suppresses variance across noisy multi-sensor telemetry.</li>
+        <li><strong>Gradient Boosting:</strong> Achieved the highest accuracy on Directional Valve Condition (97.05%). Its sequential gradient boosting effectively partitions subtle non-linear switching delays.</li>
+        <li><strong>Support Vector Machines:</strong> Matched 100% on Cooler and 98.64% on Pump, but dropped to 79.82% on Valve Condition. This drop occurs because radial basis kernels create circular decision regions that struggle with high-dimensional overlapping wear steps.</li>
+      </ul>
+    </div>
+
+    <div class="card card-teal">
+      <div class="card-title">💰 Quantified Business Impact &amp; ROI</div>
+      <p style="font-size: 7.5pt; margin-bottom: 3px;">In automotive stamping press lines, unscheduled downtime costs range from <strong>$10,000 to $50,000 per hour</strong>:</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 0;">
+        <li><strong>Avoided Catastrophic Seizure:</strong> Catching pump piston leakage at Class 1 (Weak Leakage) allows scheduled swashplate servicing ($1,500), avoiding catastrophic pump explosion and debris contamination requiring full system rebuilds ($45,000+).</li>
+        <li><strong>Eliminating Shock Hammer:</strong> Detecting accumulator nitrogen loss at 115 bar allows simple gas recharging ($200), preventing pipe rupture from hydraulic water hammer ($25,000+).</li>
+        <li><strong>Downtime Reduction:</strong> Transitioning from calendar-based maintenance to condition-based servicing reduces total maintenance downtime by an estimated 35% to 45%.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-green" style="margin-top: 6px;">
+    <div class="card-title">🎯 Summary of Verified Performance Across All 5 Subsystems</div>
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center; margin-top: 5px;">
+      <div style="background: #0F172A; padding: 5px; border-radius: 5px; border: 1px solid #1E293B;">
+        <div style="font-size: 7.2pt; color: #94A3B8;">Cooler</div>
+        <div style="font-size: 11pt; font-weight: 800; color: #10B981;">100.0%</div>
+        <div style="font-size: 6.5pt; color: #38BDF8;">RF / GB / SVM</div>
+      </div>
+      <div style="background: #0F172A; padding: 5px; border-radius: 5px; border: 1px solid #1E293B;">
+        <div style="font-size: 7.2pt; color: #94A3B8;">Valve</div>
+        <div style="font-size: 11pt; font-weight: 800; color: #10B981;">97.05%</div>
+        <div style="font-size: 6.5pt; color: #38BDF8;">Gradient Boost</div>
+      </div>
+      <div style="background: #0F172A; padding: 5px; border-radius: 5px; border: 1px solid #1E293B;">
+        <div style="font-size: 7.2pt; color: #94A3B8;">Pump</div>
+        <div style="font-size: 11pt; font-weight: 800; color: #10B981;">99.55%</div>
+        <div style="font-size: 6.5pt; color: #38BDF8;">Random Forest</div>
+      </div>
+      <div style="background: #0F172A; padding: 5px; border-radius: 5px; border: 1px solid #1E293B;">
+        <div style="font-size: 7.2pt; color: #94A3B8;">Accumulator</div>
+        <div style="font-size: 11pt; font-weight: 800; color: #10B981;">97.51%</div>
+        <div style="font-size: 6.5pt; color: #38BDF8;">Random Forest</div>
+      </div>
+      <div style="background: #0F172A; padding: 5px; border-radius: 5px; border: 1px solid #1E293B;">
+        <div style="font-size: 7.2pt; color: #94A3B8;">Stability</div>
+        <div style="font-size: 11pt; font-weight: 800; color: #10B981;">97.51%</div>
+        <div style="font-size: 6.5pt; color: #38BDF8;">Random Forest</div>
+      </div>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 29 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 26: Project Limitations &amp; Boundary Conditions</span></div>
+  <h2>26. Limitations &amp; Industrial Boundary Conditions</h2>
+  <div class="section-divider"></div>
+  <p>In keeping with academic integrity and rigorous engineering reporting, the following technical limitations inherent to the current prototype implementation are transparently documented:</p>
+
+  <div class="grid-2">
+    <div class="card card-amber">
+      <div class="card-title">⚠️ 1. Test-Rig vs. Factory Floor Operational Differences</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">The ZeMA dataset was recorded on a standardized, controlled hydraulic test bench running fixed 60-second duty cycles. In real manufacturing plants (e.g. progressive die stamping presses or injection molding lines), cycle times vary dynamically according to part tooling, die changes, and variable operator dwell times. Cycle segmentation algorithms in production must handle variable-length windows.</p>
+    </div>
+
+    <div class="card card-amber">
+      <div class="card-title">⚠️ 2. Fluid Viscosity &amp; Seasonal Temperature Drift</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">The experimental dataset uses standardized HLP 46 mineral oil under controlled laboratory ambient temperatures (20°C to 25°C). In industrial foundries or unconditioned plant floors, ambient temperatures can swing from -5°C in winter to +45°C in summer. Oil viscosity changes significantly with temperature, which can induce baseline feature drift in <code>TS1_mean</code> and <code>FS1_max</code> if uncorrected.</p>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 6px;">
+    <div class="card card-amber">
+      <div class="card-title">⚠️ 3. Sensor Drift, Noise &amp; Calibration Offsets</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">Piezo-resistive pressure transducers and flow sensors experience gradual electronic calibration drift and mechanical silt coating over months of continuous operation. If a sensor offset develops, feature distributions will shift relative to the static training median baselines, potentially degrading classification confidence.</p>
+    </div>
+
+    <div class="card card-amber">
+      <div class="card-title">⚠️ 4. High-Frequency Edge Ingestion Bottlenecks</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">Sampling 7 pressure and power sensors at 100 Hz produces 42,000 raw samples per cycle. While manageable on modern PC hardware, deploying real-time statistical aggregation on low-power programmable logic controllers (PLCs) or edge gateways requires optimized embedded C/C++ feature extraction kernels.</p>
+    </div>
+  </div>
+
+  <div class="card card-cyan" style="margin-top: 6px;">
+    <div class="card-title">📋 Summary of Observed Limitations vs. Theoretical Mitigations</div>
+    <table style="margin: 3px 0 0 0; font-size: 7.2pt;">
+      <tr><th>Observed Limitation</th><th>Impact on Current Prototype</th><th>Recommended Industrial Mitigation</th></tr>
+      <tr><td>Fixed 60s Cycle Dependency</td><td>Requires consistent cycle length for time-domain feature alignment</td><td>Implement dynamic phase-detection algorithms based on relief pressure threshold crossing</td></tr>
+      <tr><td>Uncalibrated Sensor Drift</td><td>Static models do not adapt to long-term sensor calibration offset</td><td>Deploy rolling-window Z-score standardization or autoencoder drift detection</td></tr>
+      <tr><td>Discrete Degradation Labels</td><td>Models predict discrete step classes (e.g. 73%, 80%, 90%, 100%)</td><td>Train regression estimators for continuous Remaining Useful Life (RUL) estimation</td></tr>
+    </table>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 30 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 27: Proposed Future Enhancements</span></div>
+  <h2>27. Proposed Future Enhancements &amp; Roadmap</h2>
+  <div class="section-divider"></div>
+  <p>Building upon the successful validation of the machine learning and digital-twin prototype, several high-impact engineering enhancements are proposed for subsequent development phases:</p>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">📡 1. Industrial IoT &amp; Edge Edge Gateway Integration</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">Deploying the feature extraction pipeline onto edge hardware (such as Raspberry Pi Compute Module 4, NVIDIA Jetson Orin Nano, or Siemens IOT2050 gateways) connected directly to factory PLCs via <strong>OPC-UA and MQTT protocols</strong>. This enables sub-second local edge inference without requiring factory telemetry to leave the internal industrial network.</p>
+    </div>
+
+    <div class="card card-teal">
+      <div class="card-title">🔍 2. Explainable AI (SHAP &amp; LIME Attribution)</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">Integrating SHAP (SHapley Additive exPlanations) <code>TreeExplainer</code> directly into the Streamlit dashboard. For any individual test cycle, SHAP waterfall plots will visually explain the exact marginal contribution of each physical sensor feature to the prediction, empowering plant maintenance crews with complete transparency into why a fault was flagged.</p>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 6px;">
+    <div class="card card-green">
+      <div class="card-title">🧠 3. Deep Learning on Raw Sensor Waveforms</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">Developing 1D Convolutional Neural Networks (1D-CNN) and Bidirectional LSTMs / Temporal Convolutional Networks (TCN) trained directly on raw, unsegmented 100 Hz sensor waveforms. This eliminates manual statistical feature engineering and enables automated learning of subtle high-frequency transient wave reflections and valve chatter.</p>
+    </div>
+
+    <div class="card card-amber">
+      <div class="card-title">⏳ 4. Remaining Useful Life (RUL) Prognostics</div>
+      <p style="font-size: 7.5pt; margin-bottom: 0;">Extending the discrete classification framework into continuous time-to-failure regression. By tracking wear degradation trajectories over consecutive weeks, survival analysis models (Weibull regression) can predict the exact remaining operational hours until a component reaches critical failure limits.</p>
+    </div>
+  </div>
+
+  <div class="card card-cyan" style="margin-top: 6px;">
+    <div class="card-title">🏭 5. Automated ERP &amp; CMMS Work Order Dispatch</div>
+    <p style="font-size: 7.5pt; margin-bottom: 0;">Connecting the Condition Scoring Engine to enterprise computerized maintenance management systems (CMMS, such as SAP PM or IBM Maximo). When a component trips to a Critical severity rating for three consecutive cycles, the system will automatically generate a digital work order, reserve replacement parts (e.g. spool cartridge or nitrogen recharge kit), and assign technicians.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 31 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 28: Security &amp; Reliability Considerations</span></div>
+  <h2>28. Security, Reliability &amp; Production Considerations</h2>
+  <div class="section-divider"></div>
+  <p>Deploying artificial intelligence systems into physical manufacturing environments requires rigorous operational safeguards. This section discusses input sanitization, fail-safe modes, data drift monitoring, and cybersecurity considerations.</p>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">🛡️ Input Sanitization &amp; Out-of-Bounds Filtering</div>
+      <p style="font-size: 7.5pt; margin-bottom: 3px;">Physical transducer wiring faults, sensor disconnection, or power surges can cause erroneous signal readings (e.g. pressure spikes exceeding 500 bar or negative power draw).</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 0;">
+        <li><strong>Physical Envelope Clamping:</strong> The ingestion engine validates that incoming sensor features fall within physical operating boundaries (e.g. <code>PS1_mean</code> clamped between 0 and 250 bar).</li>
+        <li><strong>Automated NaN Imputation:</strong> Any corrupt or missing telemetry fields are automatically substituted with precomputed training medians, preventing model crashes.</li>
+      </ul>
+    </div>
+
+    <div class="card card-teal">
+      <div class="card-title">🔒 Model Versioning &amp; Cryptographic Integrity</div>
+      <p style="font-size: 7.5pt; margin-bottom: 3px;">In regulated manufacturing environments, model weights must be cryptographically auditable:</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 0;">
+        <li>All 15 serialized <code>.joblib</code> model files are version-controlled in Git with exact SHA-256 commit hashes.</li>
+        <li>Model retraining runs log exact random seeds, hyperparameter dictionaries, and train/test indices to ensure bitwise reproducibility.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 6px;">
+    <div class="card card-amber">
+      <div class="card-title">📈 Statistical Drift &amp; Retraining Triggers</div>
+      <p style="font-size: 7.5pt; margin-bottom: 3px;">Over long operating lifecycles, machine tool wear and oil degradation induce covariate shift:</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 0;">
+        <li><strong>Kolmogorov-Smirnov (KS) Drift Tests:</strong> Periodic background jobs evaluate whether incoming feature distributions diverge statistically from training distributions.</li>
+        <li><strong>Model Confidence Monitoring:</strong> If mean model confidence across consecutive cycles drops below 80%, an alert is triggered advising model recalibration.</li>
+      </ul>
+    </div>
+
+    <div class="card card-green">
+      <div class="card-title">🚨 Fail-Safe Diagnostic Consensus Protocol</div>
+      <p style="font-size: 7.5pt; margin-bottom: 3px;">To prevent false-positive shutdowns or missed failure warnings:</p>
+      <ul style="font-size: 7.2pt; margin-bottom: 0;">
+        <li>The system incorporates an automated <strong>Consensus Engine</strong> comparing Random Forest, Gradient Boosting, and SVM predictions.</li>
+        <li>If models disagree on failure severity (e.g. RF predicts Healthy while GB predicts Critical Valve Lag), the system defaults to the more conservative warning state, flagging the cycle for human maintenance verification.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 32 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 29: Reproducibility &amp; Local Execution</span></div>
+  <h2>29. Reproducibility &amp; Local Execution Guide</h2>
+  <div class="section-divider"></div>
+  <p>The complete repository is structured to enable 100% turnkey reproduction on any local machine or server equipped with Python 3.10+. Follow the verified step-by-step instructions below:</p>
+
+  <div class="card card-cyan">
+    <div class="card-title">💻 Step 1: Clone Repository &amp; Setup Virtual Environment</div>
+    <div style="background: #0F172A; padding: 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.2pt; color: #38BDF8; margin-top: 3px;">
+      # Clone the GitHub repository<br>
+      git clone https://github.com/SrimanKumarV/HCL-ML-Final-Project.git<br>
+      cd HCL-ML-Final-Project<br><br>
+      # Create and activate Python virtual environment<br>
+      python -m venv venv<br>
+      # On Windows:<br>
+      venv\Scripts\activate<br>
+      # On Linux / macOS:<br>
+      source venv/bin/activate
+    </div>
+  </div>
+
+  <div class="card card-teal" style="margin-top: 6px;">
+    <div class="card-title">📦 Step 2: Install Required Dependencies</div>
+    <div style="background: #0F172A; padding: 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.2pt; color: #38BDF8; margin-top: 3px;">
+      # Install all required scientific and web packages<br>
+      pip install -r requirements.txt
+    </div>
+    <p style="font-size: 7pt; color: #94A3B8; margin-top: 3px; margin-bottom: 0;">Core packages: <code>streamlit&gt;=1.40.0</code>, <code>scikit-learn&gt;=1.6.0</code>, <code>pandas&gt;=2.2.0</code>, <code>numpy&gt;=1.26.0</code>, <code>plotly&gt;=5.24.0</code>, <code>joblib&gt;=1.4.0</code>, <code>matplotlib&gt;=3.9.0</code>, <code>seaborn&gt;=0.13.0</code>.</p>
+  </div>
+
+  <div class="card card-green" style="margin-top: 6px;">
+    <div class="card-title">🚀 Step 3: Run the Complete Training &amp; Evaluation Pipeline</div>
+    <div style="background: #0F172A; padding: 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.2pt; color: #10B981; margin-top: 3px;">
+      # Executes collinearity filtering, model training, cross-validation, and plot generation<br>
+      python run_pipeline.py
+    </div>
+    <p style="font-size: 7pt; color: #94A3B8; margin-top: 3px; margin-bottom: 0;">This command trains all 15 models, evaluates 5-fold cross validation, generates all benchmark plots in <code>outputs/plots/</code>, and writes results to <code>outputs/model_comparison_results.csv</code> and <code>outputs/rf_cv_results.csv</code>.</p>
+  </div>
+
+  <div class="card card-amber" style="margin-top: 6px;">
+    <div class="card-title">🌐 Step 4: Launch the Streamlit Digital Twin Application</div>
+    <div style="background: #0F172A; padding: 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.2pt; color: #F59E0B; margin-top: 3px;">
+      # Start local Streamlit web server<br>
+      streamlit run app.py
+    </div>
+    <p style="font-size: 7pt; color: #94A3B8; margin-top: 3px; margin-bottom: 0;">The application will automatically open in your default browser at <code>http://localhost:8501</code>.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 33 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 30: Project Directory Structure</span></div>
+  <h2>30. Project Directory Structure &amp; Code Inventory</h2>
+  <div class="section-divider"></div>
+  <p>The repository contains 34 fully tracked assets organized into a clean, logical project layout. Below is the verified repository tree and asset inventory:</p>
+
+  <div class="grid-2">
+    <div>
+      <div style="background: #0F172A; border: 1px solid #1E293B; border-radius: 6px; padding: 7px; font-family: 'JetBrains Mono', monospace; font-size: 6.8pt; color: #CBD5E1; line-height: 1.42;">
+        HCL-ML-Final-Project/<br>
+        ├── app.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #38BDF8;"># Streamlit UI &amp; Digital Twin (1,190 lines)</span><br>
+        ├── run_pipeline.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #38BDF8;"># End-to-end ML training &amp; CV script</span><br>
+        ├── generate_report_assets.py &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #38BDF8;"># High-res diagram &amp; chart generator</span><br>
+        ├── hydraulic_combined_dataset.csv &nbsp;<span style="color: #10B981;"># Full dataset (2,205 rows × 176 cols)</span><br>
+        ├── hydraulic_preprocessed_dataset.csv <span style="color: #10B981;"># Cleaned dataset (2,205 rows × 93 cols)</span><br>
+        ├── sample_test_instances.csv &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #10B981;"># Benchmark instances for demo &amp; testing</span><br>
+        ├── PROJECT_11.pdf &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #F59E0B;"># Original HCL Academy Specification</span><br>
+        ├── PROJECT_REPORT.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #F59E0B;"># Detailed markdown report (796 lines)</span><br>
+        ├── requirements.txt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #94A3B8;"># Python package dependencies</span><br>
+        ├── README.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #94A3B8;"># GitHub documentation &amp; badges</span><br>
+        ├── outputs/<br>
+        │ &nbsp; ├── model_comparison_results.csv <span style="color: #10B981;"># Exact test benchmark accuracy table</span><br>
+        │ &nbsp; ├── rf_cv_results.csv &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #10B981;"># 5-fold CV mean &amp; std dev table</span><br>
+        │ &nbsp; ├── models/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #38BDF8;"># 15 Serialized Joblib Model Artifacts</span><br>
+        │ &nbsp; │ &nbsp; ├── rf_Cooler_Condition.joblib<br>
+        │ &nbsp; │ &nbsp; ├── rf_Valve_Condition.joblib<br>
+        │ &nbsp; │ &nbsp; ├── rf_Pump_Leakage.joblib<br>
+        │ &nbsp; │ &nbsp; ├── rf_Accumulator_Pressure.joblib<br>
+        │ &nbsp; │ &nbsp; ├── rf_Stable_Flag.joblib<br>
+        │ &nbsp; │ &nbsp; ├── gb_*.joblib (5 files)<br>
+        │ &nbsp; │ &nbsp; └── svm_*.joblib (5 files)<br>
+        │ &nbsp; ├── plots/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #F59E0B;"># Original Benchmark Figures</span><br>
+        │ &nbsp; │ &nbsp; ├── confusion_matrix_cooler_rf.png<br>
+        │ &nbsp; │ &nbsp; ├── confusion_matrix_valve_rf.png<br>
+        │ &nbsp; │ &nbsp; ├── correlation_first_20_features.png<br>
+        │ &nbsp; │ &nbsp; ├── model_comparison_by_target.png<br>
+        │ &nbsp; │ &nbsp; └── rf_feature_importance_cooler.png<br>
+        │ &nbsp; └── report_assets/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #38BDF8;"># High-Res Publication Diagrams</span><br>
+        └── Hydraulic_Condition_Monitoring_AI_Deep_Project_Report.pdf
+      </div>
+    </div>
+
+    <div>
+      <div class="card card-cyan">
+        <div class="card-title">📄 Key File Purpose Annotations</div>
+        <ul style="font-size: 7.2pt; margin-bottom: 0;">
+          <li><strong><code>app.py</code>:</strong> The central web application. Contains full CSS design system, cached data/model loaders, inference engine, composite health calculator, and all 6 tab implementations.</li>
+          <li><strong><code>run_pipeline.py</code>:</strong> Autonomous ML pipeline script. Loads dataset, applies Pearson collinearity pruning, performs stratified splits, executes cross-validation, trains 15 estimators, and exports models/plots.</li>
+          <li><strong><code>outputs/models/*.joblib</code>:</strong> Serialized production models containing learned weights, tree split criteria, and scaler objects ready for sub-50ms inference.</li>
+          <li><strong><code>outputs/model_comparison_results.csv</code>:</strong> Primary empirical benchmark log recording exact holdout test set accuracy across all algorithm-target combinations.</li>
+          <li><strong><code>sample_test_instances.csv</code>:</strong> Lightweight sample dataset allowing immediate live demonstration in factory environments without full dataset loading.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 34 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 31: Conclusion &amp; Technical Summary</span></div>
+  <h2>31. Conclusion &amp; Technical Contributions</h2>
+  <div class="section-divider"></div>
+  <p>This project has designed, empirically validated, and deployed a production-grade <strong>Predictive Maintenance Machine Learning System and Digital Twin Simulation Cockpit</strong> for hydraulic condition monitoring, directly fulfilling all requirements established by HCL Academy Project 11.</p>
+
+  <div class="grid-2">
+    <div class="card card-cyan">
+      <div class="card-title">🏆 Key Engineering &amp; ML Accomplishments</div>
+      <ul style="font-size: 7.5pt; margin-bottom: 0;">
+        <li><strong>Multi-Sensor Telemetry Fusion:</strong> Fused 17 physical sensor channels across 2,205 operating cycles into a unified multi-scale statistical feature space.</li>
+        <li><strong>Rigorous Collinearity Reduction:</strong> Pruned 83 collinear features (|r| &gt; 0.97) to eliminate variance inflation, yielding 88 robust predictive descriptors.</li>
+        <li><strong>High Diagnostic Accuracy:</strong> Achieved 100.0% accuracy on Cooler Heat Exchanger, 99.55% on Pump Leakage, 97.51% on Accumulator Pressure, 97.51% on Dynamic Stability, and 97.05% on Directional Spool Valve.</li>
+        <li><strong>Zero False Alarms on Healthy Assets:</strong> Achieved a perfect 100.0% true positive rate on healthy valves and coolers, eliminating spurious shutdowns.</li>
+      </ul>
+    </div>
+
+    <div class="card card-teal">
+      <div class="card-title">🌐 Digital Twin &amp; Software Innovations</div>
+      <ul style="font-size: 7.5pt; margin-bottom: 0;">
+        <li><strong>Interactive What-If Simulation:</strong> Pioneered a 40-step sensitivity sweep engine that enables engineers to simulate wear dynamics and identify failure tipping points in software.</li>
+        <li><strong>Composite Health Scoring:</strong> Formulated a weighted 0–100 health index that converts raw predictions into clear mechanical maintenance directives.</li>
+        <li><strong>Cloud-Native Serving:</strong> Packaged 15 production models into an industrial Streamlit application deployed live at <a href="https://hydraulic-ai-monitor.streamlit.app/" target="_blank">hydraulic-ai-monitor.streamlit.app</a>.</li>
+        <li><strong>Fail-Safe Architecture:</strong> Implemented model consensus voting and self-healing memory fallback to guarantee 100% operational uptime.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-green" style="margin-top: 8px;">
+    <div class="card-title">🏭 Final Academic &amp; Industry Assessment</div>
+    <p style="font-size: 7.8pt; margin-bottom: 0;">By combining first-principles hydraulic thermodynamics and fluid dynamics with state-of-the-art ensemble learning and interactive cloud software, this project demonstrates that <strong>multi-target machine learning can successfully replace static alarm thresholds and calendar-based servicing</strong>. The resulting platform delivers substantial industrial value: preventing catastrophic equipment failures, eliminating costly unscheduled plant downtime, avoiding secondary hydraulic shock damage, and optimizing replacement part inventory. The codebase, dataset, models, and interactive dashboard stand fully documented, verified, and operational for academic viva examination and industrial deployment.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 35 of 36</span></div>
+</div>
+
+<div class="page">
+  <div class="running-header"><span class="title-badge">Hydraulic Condition Monitoring AI &amp; Digital Twin</span><span>Section 32: References &amp; Clickable Master Links</span></div>
+  <h2>32. References &amp; Clickable Master Links</h2>
+  <div class="section-divider"></div>
+  <p>All assets, datasets, trained models, scripts, and deployment URLs referenced throughout this report are fully accessible via the clickable master links below:</p>
+
+  <div class="card card-cyan">
+    <div class="card-title">🔗 Project Master Repositories &amp; Cloud Deployments</div>
+    <table style="margin: 3px 0 0 0; font-size: 7.2pt;">
+      <tr><th>Asset Description</th><th>Clickable URL / Resource Location</th><th>Status / Purpose</th></tr>
+      <tr>
+        <td><strong>GitHub Project Repository</strong></td>
+        <td><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">https://github.com/SrimanKumarV/HCL-ML-Final-Project</a></td>
+        <td><span class="badge badge-green">Public | Active</span> Primary version-controlled codebase</td>
+      </tr>
+      <tr>
+        <td><strong>Live Streamlit Application</strong></td>
+        <td><a href="https://hydraulic-ai-monitor.streamlit.app/" target="_blank">https://hydraulic-ai-monitor.streamlit.app/</a></td>
+        <td><span class="badge badge-green">Live Cloud</span> Interactive Digital Twin Cockpit</td>
+      </tr>
+      <tr>
+        <td><strong>Streamlit Dashboard Code</strong></td>
+        <td><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project/blob/main/app.py" target="_blank">app.py on GitHub</a></td>
+        <td>1,190-line production application script</td>
+      </tr>
+      <tr>
+        <td><strong>ML Training Pipeline Script</strong></td>
+        <td><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project/blob/main/run_pipeline.py" target="_blank">run_pipeline.py on GitHub</a></td>
+        <td>Feature pruning, CV, model training, plot exports</td>
+      </tr>
+      <tr>
+        <td><strong>Model Comparison CSV</strong></td>
+        <td><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project/blob/main/outputs/model_comparison_results.csv" target="_blank">model_comparison_results.csv on GitHub</a></td>
+        <td>Holdout test benchmark accuracy logs</td>
+      </tr>
+      <tr>
+        <td><strong>RF Cross-Validation CSV</strong></td>
+        <td><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project/blob/main/outputs/rf_cv_results.csv" target="_blank">rf_cv_results.csv on GitHub</a></td>
+        <td>5-fold cross-validation mean &amp; std dev logs</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-teal" style="margin-top: 8px;">
+    <div class="card-title">📚 Academic Literature &amp; Dataset Citations</div>
+    <ol style="font-size: 7.2pt; margin-bottom: 0; margin-left: 15px;">
+      <li><strong>Helwig, N., Pignanelli, E., &amp; Schütze, A. (2015).</strong> <em>Condition Monitoring of a Complex Hydraulic System Using Multivariate Statistics.</em> In 2015 IEEE International Instrumentation and Measurement Technology Conference (I2MTC) Proceedings, pp. 210–215. IEEE. DOI: <a href="https://doi.org/10.1109/I2MTC.2015.7151267" target="_blank">10.1109/I2MTC.2015.7151267</a>.</li>
+      <li><strong>UC Irvine Machine Learning Repository.</strong> <em>Condition Monitoring of Hydraulic Systems Dataset.</em> Donated by ZeMA (Center for Mechatronics and Automation Technology), Saarland University, Germany. Available: <a href="https://archive.ics.uci.edu/dataset/447/condition+monitoring+of+hydraulic+systems" target="_blank">https://archive.ics.uci.edu/dataset/447</a>.</li>
+      <li><strong>Breiman, L. (2001).</strong> <em>Random Forests.</em> Machine Learning, 45(1), pp. 5–32. Springer. DOI: <a href="https://doi.org/10.1023/A:1010933404324" target="_blank">10.1023/A:1010933404324</a>.</li>
+      <li><strong>Friedman, J. H. (2001).</strong> <em>Greedy Function Approximation: A Gradient Boosting Machine.</em> The Annals of Statistics, 29(5), pp. 1189–1232. Institute of Mathematical Statistics.</li>
+      <li><strong>Cortes, C., &amp; Vapnik, V. (1995).</strong> <em>Support-Vector Networks.</em> Machine Learning, 20(3), pp. 273–297. Springer.</li>
+      <li><strong>Grieves, M., &amp; Vickers, J. (2017).</strong> <em>Digital Twin: Mitigating Unpredictable, Undesirable Emergent Behavior in Complex Systems.</em> In Transdisciplinary Perspectives on Complex Systems, pp. 85–113. Springer, Cham.</li>
+      <li><strong>ISO 4406:2021.</strong> <em>Hydraulic Fluid Power — Fluids — Method for Coding the Level of Contamination by Solid Particles.</em> International Organization for Standardization, Geneva, Switzerland.</li>
+    </ol>
+  </div>
+
+  <div class="card card-green" style="margin-top: 8px;">
+    <div class="card-title">📝 Report Authorship &amp; Project Attestation</div>
+    <p style="font-size: 7.5pt; margin-bottom: 0;">This technical report is submitted in formal completion of <strong>Project 11 (Predictive Maintenance for Hydraulic Press and Hydraulic Test-Rig Systems)</strong> under the Machine Learning curriculum at HCL Academy. All source code, dataset transformations, model weights, evaluation plots, and deployment artifacts have been created, verified, and published by <strong>Sriman Kumar V</strong>.</p>
+  </div>
+  <div class="running-footer"><span>HCL Academy | Machine Learning Final Project (Project 11)</span><span><a href="https://github.com/SrimanKumarV/HCL-ML-Final-Project" target="_blank">github.com/SrimanKumarV/HCL-ML-Final-Project</a></span><span style="font-weight: 700; color: #38BDF8;">Page 36 of 36</span></div>
+</div>
+</body>
+</html>
